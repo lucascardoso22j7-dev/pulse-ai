@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target.files && e.target.files[0]) {
         const file = e.target.files[0];
         const urlVideoReal = URL.createObjectURL(file);
-        adicionarCardMemeNavTela(file.name.substring(0, 15), urlVideoReal, '📁 Aparelho');
+        adicionarCardMemeNaTela(file.name.substring(0, 15), urlVideoReal, '📁 Aparelho');
         alert('Vídeo do aparelho adicionado!');
       }
     });
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================
-  // SISTEMA DO CHAT E MOTOR INTELIGENTE INSTANTÂNEO
+  // SISTEMA DO CHAT COM IA REAL E COMPLETA
   // ==========================================
   const btnPerguntar = document.getElementById('btnPerguntar');
   const inputPergunta = document.getElementById('pergunta');
@@ -204,7 +204,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function enviarMensagem() {
+  function formatarTextoIA(texto) {
+    if (!texto) return '';
+    return texto.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*/g, '').replace(/\n/g, '<br>');
+  }
+
+  async function enviarMensagem() {
     if (!inputPergunta) return;
     const texto = inputPergunta.value.trim();
     if (!texto) return;
@@ -212,43 +217,45 @@ document.addEventListener('DOMContentLoaded', () => {
     adicionarBalao(texto, 'user-message');
     inputPergunta.value = '';
 
-    // 1. Comandos locais de cores
+    // 1. Comandos locais de cores rápidos
     const respCor = aplicarCoresPorTexto(texto);
     if (respCor) {
-      setTimeout(() => adicionarBalao(respCor, 'ai-message'), 300);
+      setTimeout(() => adicionarBalao(respCor, 'ai-message'), 200);
       return;
     } 
 
     const tLower = texto.toLowerCase();
 
-    // 2. Cria balão com efeito de "a digitar" (3 pontinhos vermelhos saltando)
+    // 2. Resposta local instantânea para orçamentos da oficina
+    if (tLower.includes('onix') || tLower.includes('funilaria') || tLower.includes('orçamento')) {
+      setTimeout(() => adicionarBalao(`📄 <b>Orçamento Estimado de Funilaria:</b><br>• Funilaria e Pintura de Para-choque: R$ 650,00<br>• Martelinho de Ouro: R$ 250,00<br><b>Total: R$ 900,00</b> (Prazo: 2 dias)`, 'ai-message'), 200);
+      return;
+    }
+
+    // 3. Mostra os 3 pontinhos vermelhos a saltar na bolha
     const HTMLPontinhos = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
     const idDigitando = adicionarBalao(HTMLPontinhos, 'ai-message digitando');
 
-    // 3. Motor inteligente local (sempre responde rápido e sem falhas de rede)
-    setTimeout(() => {
+    // 4. Chamada à IA Livre (Pollinations)
+    try {
+      const promptSistema = encodeURIComponent("És o Pulse AI, um assistente inteligente, especialista em mecânica, tecnologia e cultura geral. Responde em português de forma direta, sem usar asteriscos.");
+      const promptUsuario = encodeURIComponent(texto);
+      
+      const response = await fetch(`https://text.pollinations.ai/${promptSistema}%20${promptUsuario}?model=openai`);
+
       if (idDigitando) idDigitando.remove();
 
-      let resposta = "";
-
-      if (tLower.includes('multímetro') || tLower.includes('multimetro') || tLower.includes('medir')) {
-        resposta = `⚡ <b>Como usar um Multímetro:</b><br><br>1. <b>Tensão Contínua (DCV):</b> Ajuste o seletor para medir baterias de carros (geralmente em 20V).<br>2. <b>Pontas de Prova:</b> Conecte a ponta preta no borne <b>COM</b> e a vermelha no <b>VΩmA</b>.<br>3. <b>Medição:</b> Encoste a ponta vermelha no polo positivo e a preta no negativo para verificar a carga.`;
-      } 
-      else if (tLower.includes('alternador') || tLower.includes('transmissor')) {
-        resposta = `⚡ <b>Alternador vs Transmissor:</b><br><br>• <b>Alternador:</b> Gera energia elétrica no motor para alimentar o sistema e recarregar a bateria.<br>• <b>Transmissor:</b> Transfere a força mecânica do motor para as rodas ou transmite sinais de sensores.`;
-      } 
-      else if (tLower.includes('onix') || tLower.includes('funilaria') || tLower.includes('orçamento')) {
-        resposta = `📄 <b>Orçamento Estimado de Funilaria:</b><br>• Funilaria e Pintura de Para-choque: R$ 650,00<br>• Martelinho de Ouro: R$ 250,00<br><b>Total: R$ 900,00</b> (Prazo: 2 dias)`;
-      } 
-      else if (tLower.includes('olá') || tLower.includes('ola') || tLower.includes('tudo bem') || tLower.includes('como vai')) {
-        resposta = `Tudo ótimo por aqui! O <b>Pulse AI</b> está a todo vapor[cite: 8]. Como posso ajudar nos teus projetos ou na oficina hoje?`;
-      } 
-      else {
-        resposta = `Compreendi a tua questão sobre "<i>${texto}</i>". O Pulse AI está com os módulos de oficina, código e ferramentas ativados. Como deseja avançar?`;
+      if (response.ok) {
+        const respostaTexto = await response.text();
+        adicionarBalao(formatarTextoIA(respostaTexto), 'ai-message');
+      } else {
+        adicionarBalao("Estou a ter um pequeno pico de acessos. Podes perguntar novamente?", 'ai-message');
       }
-
-      adicionarBalao(resposta, 'ai-message');
-    }, 700);
+    } catch (error) {
+      if (idDigitando) idDigitando.remove();
+      console.error(error);
+      adicionarBalao("Sem conexão no momento. Tenta novamente em alguns segundos!", 'ai-message');
+    }
   }
 
   function adicionarBalao(texto, classe) {
