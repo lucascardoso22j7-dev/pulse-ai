@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================
-  // SISTEMA DO CHAT E MOTOR INTELIGENTE INSTANTÂNEO
+  // SISTEMA DO CHAT COM GROQ API PRIVADA E PONTINHOS
   // ==========================================
   const btnPerguntar = document.getElementById('btnPerguntar');
   const inputPergunta = document.getElementById('pergunta');
@@ -204,7 +204,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function enviarMensagem() {
+  function formatarTextoIA(texto) {
+    if (!texto) return '';
+    return texto.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*/g, '');
+  }
+
+  async function enviarMensagem() {
     if (!inputPergunta) return;
     const texto = inputPergunta.value.trim();
     if (!texto) return;
@@ -212,43 +217,57 @@ document.addEventListener('DOMContentLoaded', () => {
     adicionarBalao(texto, 'user-message');
     inputPergunta.value = '';
 
-    // 1. Comandos locais de cores
+    // 1. Comandos locais rápidos de cores
     const respCor = aplicarCoresPorTexto(texto);
     if (respCor) {
-      setTimeout(() => adicionarBalao(respCor, 'ai-message'), 300);
+      setTimeout(() => adicionarBalao(respCor, 'ai-message'), 200);
       return;
     } 
 
     const tLower = texto.toLowerCase();
 
-    // 2. Cria balão com efeito de "a digitar" (3 pontinhos)
+    // 2. Respostas locais instantâneas para orçamentos
+    if (tLower.includes('onix') || tLower.includes('funilaria') || tLower.includes('orçamento')) {
+      setTimeout(() => adicionarBalao(`📄 <b>Orçamento Estimado de Funilaria:</b><br>• Funilaria e Pintura de Para-choque: R$ 650,00<br>• Martelinho de Ouro: R$ 250,00<br><b>Total: R$ 900,00</b> (Prazo: 2 dias)`, 'ai-message'), 200);
+      return;
+    }
+
+    // 3. Indicador de 3 pontinhos vermelhos animados a saltar
     const HTMLPontinhos = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
     const idDigitando = adicionarBalao(HTMLPontinhos, 'ai-message digitando');
 
-    // 3. Motor inteligente de respostas instantâneas
-    setTimeout(() => {
+    try {
+      const apiKey = "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";
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "llama3-8b-8192",
+          messages: [
+            { role: "system", content: "Você é o Pulse AI, um assistente inteligente, prestativo e amigável, especialista em tecnologia, mecânica e programação. Responda de forma direta, clara e sem usar asteriscos em excesso em português." },
+            { role: "user", content: texto }
+          ],
+          temperature: 0.7
+        })
+      });
+
       if (idDigitando) idDigitando.remove();
 
-      let resposta = "";
-
-      if (tLower.includes('multímetro') || tLower.includes('multimetro') || tLower.includes('medir')) {
-        resposta = `⚡ <b>Como usar um Multímetro:</b><br><br>1. <b>Tensão Contínua (DCV):</b> Ajuste o seletor para medir baterias de carros (geralmente em 20V).<br>2. <b>Pontas de Prova:</b> Conecte a ponta preta no borne <b>COM</b> e a vermelha no <b>VΩmA</b>.<br>3. <b>Medição:</b> Encoste a ponta vermelha no polo positivo e a preta no negativo para verificar a carga.`;
-      } 
-      else if (tLower.includes('alternador') || tLower.includes('transmissor')) {
-        resposta = `⚡ <b>Alternador vs Transmissor:</b><br><br>• <b>Alternador:</b> Gera energia elétrica no motor para alimentar o sistema e recarregar a bateria.<br>• <b>Transmissor:</b> Transfere a força mecânica do motor para as rodas ou transmite sinais de sensores.`;
-      } 
-      else if (tLower.includes('onix') || tLower.includes('funilaria') || tLower.includes('orçamento')) {
-        resposta = `📄 <b>Orçamento Estimado de Funilaria:</b><br>• Funilaria e Pintura de Para-choque: R$ 650,00<br>• Martelinho de Ouro: R$ 250,00<br><b>Total: R$ 900,00</b> (Prazo: 2 dias)`;
-      } 
-      else if (tLower.includes('olá') || tLower.includes('ola') || tLower.includes('tudo bem') || tLower.includes('como vai')) {
-        resposta = `Tudo ótimo por aqui! O <b>Pulse AI</b> está a todo vapor. Como posso ajudar nos teus projetos ou na oficina hoje?`;
-      } 
-      else {
-        resposta = `Compreendi a tua questão sobre "<i>${texto}</i>". O Pulse AI está com os módulos de oficina, código e ferramentas ativados. Como deseja avançar?`;
+      if (response.ok) {
+        const data = await response.json();
+        const respostaIA = data.choices[0].message.content;
+        adicionarBalao(formatarTextoIA(respostaIA), 'ai-message');
+      } else {
+        adicionarBalao("Desculpa, tive um pequeno problema ao processar. Podes repetir a pergunta?", 'ai-message');
       }
-
-      adicionarBalao(resposta, 'ai-message');
-    }, 700); // Resposta ultra-rápida em menos de 1 segundo!
+    } catch (error) {
+      if (idDigitando) idDigitando.remove();
+      console.error(error);
+      adicionarBalao("Erro de conexão ao falar com o servidor do Pulse AI.", 'ai-message');
+    }
   }
 
   function adicionarBalao(texto, classe) {
