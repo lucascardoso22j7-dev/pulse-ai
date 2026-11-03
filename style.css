@@ -1,3 +1,6 @@
+/* ==========================================
+   1. CONFIGURAÇÕES GLOBAIS E RESET
+   ========================================== */
 * { 
   box-sizing: border-box; 
   margin: 0; 
@@ -5,7 +8,6 @@
   font-family: 'Plus Jakarta Sans', sans-serif; 
 }
 
-/* Garante que a página ocupa a tela inteira de forma segura */
 html, body { 
   background: #0b0b0e; 
   color: #ededef; 
@@ -13,6 +15,7 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+  overflow: hidden;
 }
 
 .chat-container { 
@@ -25,7 +28,10 @@ html, body {
   overflow: hidden;
 }
 
-/* HEADER MINIMALISTA */
+
+/* ==========================================
+   2. HEADER E LOGO AUTÊNTICA (PULSE)
+   ========================================== */
 .chat-header { 
   padding: 14px 24px; 
   border-bottom: 1px solid rgba(255, 255, 255, 0.08); 
@@ -43,16 +49,17 @@ html, body {
   gap: 12px; 
 }
 
-.logo-sparkle { 
-  width: 34px; 
-  height: 34px; 
-  background: #18181b; 
-  border: 1px solid rgba(255, 255, 255, 0.15); 
-  border-radius: 9px; 
+/* Nova Logo de Batimento/Pulso (Exclusiva Pulse AI) */
+.logo-pulse-custom { 
+  width: 36px; 
+  height: 36px; 
+  background: linear-gradient(135deg, #ff003c, #8e2de2); 
+  border-radius: 10px; 
   display: flex; 
   align-items: center; 
   justify-content: center; 
   color: #fff; 
+  box-shadow: 0 4px 12px rgba(255, 0, 60, 0.3);
 }
 
 .brand-info h1 { 
@@ -95,7 +102,10 @@ html, body {
   font-size: 12px; 
 }
 
-/* ABAS E CHAT */
+
+/* ==========================================
+   3. ABAS, CORPO DO CHAT E MENSAGENS
+   ========================================== */
 .tab-content { 
   display: none; 
   flex-direction: column; 
@@ -149,7 +159,10 @@ html, body {
   color: #fff; 
 }
 
-/* FOOTER E MENU FLUTUANTE - Garante que o input fica sempre visível e clicável */
+
+/* ==========================================
+   4. FOOTER E BARRA DE INPUT
+   ========================================== */
 .chat-footer { 
   padding: 12px 24px; 
   border-top: 1px solid rgba(255, 255, 255, 0.08); 
@@ -258,7 +271,10 @@ textarea {
   z-index: 52;
 }
 
-/* ESTÚDIO DE MEMES E PAINEL DE FOTOS */
+
+/* ==========================================
+   5. ESTÚDIO DE MEMES E PAINEL DE FOTOS
+   ========================================== */
 .memes-header-flex { 
   display: flex; 
   justify-content: space-between; 
