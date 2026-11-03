@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pulse AI</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body id="appBody">
+  <div class="chat-container">
+    <!-- Header Minimalista e Profissional -->
+    <header class="chat-header">
+      <div class="brand">
+        <div class="logo-sparkle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <h1>Pulse AI</h1>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="color-picker-box">
+          <label for="color1">🎨</label>
+          <input type="color" id="color1" value="#00b09b">
+          <input type="color" id="color2" value="#8e2de2">
+        </div>
+        <button id="btnLimpar" class="action-btn">🗑️ Limpar</button>
+      </div>
+    </header>
+
+    <!-- Área Principal do Chat -->
+    <main id="aba-chat" class="tab-content active">
+      <div id="historico" class="chat-body">
+        <div class="message ai-message">
+          <div class="message-content">
+            <div class="bubble">
+              Olá, Lucas! O <b>Pulse AI</b> está pronto. Podes aceder às ferramentas no menu <b>+</b> ou ir diretamente para o estúdio de memes e adicionar as tuas fotos para criar edições virais!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="chat-footer">
+        <div id="menuAnexo" class="anexo-menu">
+          <button id="btnMenuMemes">🎭 Estúdio de Memes & Fotos</button>
+          <button id="btnMenuOrcamento">🚗 Novo Orçamento de Funilaria (Pai)</button>
+          <button id="btnMenuCortes">🎬 Postar Cortes Automáticos (Galeria)</button>
+          <button id="btnMenuImagem">🎨 Criar Imagem / Animação por Comando</button>
+          <label for="uploadEditarImagem" class="anexo-label-btn">✏️ Editar Foto / Imagem</label>
+          <input type="file" id="uploadEditarImagem" accept="image/*" style="display:none">
+        </div>
+
+        <div class="input-container">
+          <button id="btnMais" class="plus-btn" title="Menu de Ferramentas">+</button>
+          <textarea id="pergunta" rows="1" placeholder="Converse com a IA, peça cores ou clique no +..." autocomplete="off"></textarea>
+          <button id="btnPerguntar" class="send-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
+      </footer>
+    </main>
+
+    <!-- Seção de Memes e Edição com Fotos -->
+    <section id="aba-memes" class="tab-content visual-studio memes-section">
+      <div class="memes-header-flex">
+        <h2>🎭 Estúdio de Memes Virais & Fotos</h2>
+        <button id="btnVoltarChat" class="main-btn" style="background:#27272a; padding:6px 12px; font-size:12px;">← Voltar ao Chat</button>
+      </div>
+
+      <!-- Barra de Ferramentas: Importar Links, Vídeos e Fotos -->
+      <div class="import-panel-top">
+        <div class="link-import-box">
+          <input type="text" id="linkMemeInput" placeholder="Cole o link do TikTok, Instagram ou Reels...">
+          <button id="btnImportarLink" class="main-btn">🔗 Importar Link</button>
+        </div>
+        <div class="or-divider">ou</div>
+        <label for="novoVideoMeme" class="upload-playlist-btn">📁 Enviar Vídeo</label>
+        <input type="file" id="novoVideoMeme" accept="video/*" style="display:none">
+        
+        <!-- NOVO BOTÃO DE ADICIONAR FOTO AO MEME -->
+        <label for="uploadFotoMeme" class="upload-playlist-btn foto-btn">🖼️ Adicionar Fotos</label>
+        <input type="file" id="uploadFotoMeme" accept="image/*" style="display:none">
+      </div>
+
+      <!-- Área de Prévia da Foto Carregada para Edição -->
+      <div id="painelFotoEdicao" class="foto-edicao-panel" style="display:none;">
+        <div class="foto-preview-box">
+          <img id="imgMemePreview" src="" alt="Sua foto no meme">
+          <div class="foto-info">
+            <span class="badge-status">✨ Foto Pronta para Integrar ao Vídeo</span>
+            <p style="font-size: 12px; color: #a1a1aa; margin-top: 4px;">A tua foto será misturada ao meme selecionado para gerar o novo vídeo editado!</p>
+            <button id="btnGerarMemeComFoto" class="main-btn" style="margin-top: 8px; padding: 6px 12px; font-size: 12px;">⚡ Gerar Vídeo Editado</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid de Vídeos e Projetos -->
+      <div class="meme-grid" id="playlistMemes" style="margin-top:16px;">
+        <div class="meme-card active-meme" data-nome="A Discussão do Casal / Dupla">
+          <div class="badge-pessoas">👥 2 Pessoas</div>
+          <video src="https://www.w3schools.com/html/mov_bbb.mp4" style="width:100%; height:90px; object-fit:cover; border-radius:6px; background:#000;" controls preload="metadata"></video>
+          <span style="font-size:11px; font-weight:bold; display:block; margin-top:4px;">A Discussão (Dupla)</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
