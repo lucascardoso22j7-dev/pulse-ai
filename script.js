@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
     playlistMemes.prepend(card);
   }
 
-  // SISTEMA DO CHAT COM IA REAL E DYNÂMICA
+  // SISTEMA DO CHAT COM INDICADOR "A DIGITAR..."
   const btnPerguntar = document.getElementById('btnPerguntar');
   const inputPergunta = document.getElementById('pergunta');
   const btnLimpar = document.getElementById('btnLimpar');
@@ -214,33 +214,39 @@ document.addEventListener('DOMContentLoaded', () => {
     adicionarBalao(texto, 'user-message');
     inputPergunta.value = '';
 
-    // 1. Comandos locais de cores
+    // 1. Comandos locais rápidos de cores
     const respCor = aplicarCoresPorTexto(texto);
     if (respCor) {
-      setTimeout(() => adicionarBalao(respCor, 'ai-message'), 400);
+      setTimeout(() => adicionarBalao(respCor, 'ai-message'), 300);
       return;
     } 
     
-    // 2. Comandos locais de orçamentos / funilaria
+    // 2. Comandos locais rápidos de orçamentos / funilaria
     const tLower = texto.toLowerCase();
     if (tLower.includes('onix') || tLower.includes('funilaria') || tLower.includes('orçamento')) {
-      setTimeout(() => adicionarBalao(`📄 <b>Orçamento Estimado de Funilaria:</b><br>• Funilaria e Pintura de Para-choque: R$ 650,00<br>• Martelinho de Ouro: R$ 250,00<br><b>Total: R$ 900,00</b> (Prazo: 2 dias)`, 'ai-message'), 400);
+      setTimeout(() => adicionarBalao(`📄 <b>Orçamento Estimado de Funilaria:</b><br>• Funilaria e Pintura de Para-choque: R$ 650,00<br>• Martelinho de Ouro: R$ 250,00<br><b>Total: R$ 900,00</b> (Prazo: 2 dias)`, 'ai-message'), 300);
       return;
     }
 
-    // 3. Chamada de IA Real sem bloquear
+    // 3. Mostra o balão de "A digitar..." enquanto busca a resposta da IA
+    const idDigitando = adicionarBalao('<i>Pulse AI está a pensar...</i>', 'ai-message digitando');
+
     try {
-      const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(texto)}?system=Você é o assistente Pulse AI. Responda de forma curta, prestativa e amigável em português.`);
+      const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(texto)}?system=Você é o assistente Pulse AI. Responda de forma curta, dinâmica e prestativa em português.`);
       
+      // Remove o balão de "a pensar"
+      if (idDigitando) idDigitando.remove();
+
       if (response.ok) {
         const respostaIA = await response.text();
         adicionarBalao(respostaIA, 'ai-message');
       } else {
-        adicionarBalao("Olá! Sou o Pulse AI. Como posso te ajudar com os seus projetos, memes ou orçamentos hoje?", 'ai-message');
+        adicionarBalao("Tudo bem por aqui! Como posso ajudar nos teus projetos?", 'ai-message');
       }
     } catch (error) {
+      if (idDigitando) idDigitando.remove();
       console.error(error);
-      adicionarBalao("Olá! O Pulse AI está pronto para ajudar. O que deseja fazer?", 'ai-message');
+      adicionarBalao("Estou pronto! O que vamos fazer agora?", 'ai-message');
     }
   }
 
@@ -251,5 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
     div.innerHTML = `<div class="bubble">${texto}</div>`;
     chatBody.appendChild(div);
     chatBody.scrollTop = chatBody.scrollHeight;
+    return div; // Retorna o elemento para permitir remoção (ex: efeito a pensar)
   }
 });
