@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
     playlistMemes.prepend(card);
   }
 
-  // SISTEMA DO CHAT E MOTOR INTELIGENTE LOCAL (ZERO ERROS DE API)
+  // SISTEMA DO CHAT COM IA REAL E DYNÂMICA
   const btnPerguntar = document.getElementById('btnPerguntar');
   const inputPergunta = document.getElementById('pergunta');
   const btnLimpar = document.getElementById('btnLimpar');
@@ -207,31 +207,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function enviarMensagem() {
+  async function enviarMensagem() {
     const texto = inputPergunta.value.trim();
     if (!texto) return;
 
     adicionarBalao(texto, 'user-message');
     inputPergunta.value = '';
 
-    setTimeout(() => {
-      // 1. Verifica comandos de cor
-      const respCor = aplicarCoresPorTexto(texto);
-      if (respCor) {
-        adicionarBalao(respCor, 'ai-message');
-        return;
-      } 
-      
-      // 2. Verifica comandos de orçamento / funilaria
-      const tLower = texto.toLowerCase();
-      if (tLower.includes('onix') || tLower.includes('funilaria') || tLower.includes('orçamento') || tLower.includes('carro')) {
-        adicionarBalao(`📄 <b>Orçamento Estimado de Funilaria:</b><br>• Funilaria e Pintura de Para-choque: R$ 650,00<br>• Martelinho de Ouro: R$ 250,00<br><b>Total: R$ 900,00</b> (Prazo: 2 dias)`, 'ai-message');
-        return;
-      }
+    // 1. Comandos locais de cores
+    const respCor = aplicarCoresPorTexto(texto);
+    if (respCor) {
+      setTimeout(() => adicionarBalao(respCor, 'ai-message'), 400);
+      return;
+    } 
+    
+    // 2. Comandos locais de orçamentos / funilaria
+    const tLower = texto.toLowerCase();
+    if (tLower.includes('onix') || tLower.includes('funilaria') || tLower.includes('orçamento')) {
+      setTimeout(() => adicionarBalao(`📄 <b>Orçamento Estimado de Funilaria:</b><br>• Funilaria e Pintura de Para-choque: R$ 650,00<br>• Martelinho de Ouro: R$ 250,00<br><b>Total: R$ 900,00</b> (Prazo: 2 dias)`, 'ai-message'), 400);
+      return;
+    }
 
-      // 3. Resposta inteligente genérica do Pulse AI
-      adicionarBalao(`🤖 Analisei a tua solicitação sobre "<i>${texto}</i>". O <b>Pulse AI</b> está com todos os módulos operacionais (Chat, Estúdio de Memes e Ferramentas de Automoveis ativos)! Como deseja prosseguir?`, 'ai-message');
-    }, 500);
+    // 3. Chamada de IA Real sem bloquear
+    try {
+      const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(texto)}?system=Você é o assistente Pulse AI. Responda de forma curta, prestativa e amigável em português.`);
+      
+      if (response.ok) {
+        const respostaIA = await response.text();
+        adicionarBalao(respostaIA, 'ai-message');
+      } else {
+        adicionarBalao("Olá! Sou o Pulse AI. Como posso te ajudar com os seus projetos, memes ou orçamentos hoje?", 'ai-message');
+      }
+    } catch (error) {
+      console.error(error);
+      adicionarBalao("Olá! O Pulse AI está pronto para ajudar. O que deseja fazer?", 'ai-message');
+    }
   }
 
   function adicionarBalao(texto, classe) {
