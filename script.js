@@ -225,9 +225,9 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Chamada real para a API do Gemini com a chave integrada
+    // Chamada configurada com a tua nova chave
     try {
-      const apiKey = "AQ.Ab8RN6Kjv-RquITlAf4Yz-5p0VzUqTd6hP56pT1x6jGVCeS76Q";
+      const apiKey = "AQ.Ab8RN6KImznMkgE-yMiPYZB9pFBw3jA8o850-Qslu0iZoR3pbuw";
       
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
         method: 'POST',
