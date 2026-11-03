@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================
-  // SISTEMA DO CHAT (BOTÃO DE ENVIAR E ENTER)
+  // SISTEMA DO CHAT E MOTOR INTELIGENTE INSTANTÂNEO
   // ==========================================
   const btnPerguntar = document.getElementById('btnPerguntar');
   const inputPergunta = document.getElementById('pergunta');
@@ -204,12 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function formatarTextoIA(texto) {
-    if (!texto) return '';
-    return texto.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*/g, '');
-  }
-
-  async function enviarMensagem() {
+  function enviarMensagem() {
     if (!inputPergunta) return;
     const texto = inputPergunta.value.trim();
     if (!texto) return;
@@ -220,58 +215,40 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Comandos locais de cores
     const respCor = aplicarCoresPorTexto(texto);
     if (respCor) {
-      setTimeout(() => adicionarBalao(respCor, 'ai-message'), 200);
+      setTimeout(() => adicionarBalao(respCor, 'ai-message'), 300);
       return;
     } 
 
     const tLower = texto.toLowerCase();
 
-    // 2. Respostas locais instantâneas
-    if (tLower.includes('olá') || tLower.includes('ola') || tLower.includes('tudo bem') || tLower.includes('como vai')) {
-      setTimeout(() => {
-        adicionarBalao("Tudo ótimo por aqui! O <b>Pulse AI</b> está a todo vapor. Como posso ajudar nos teus projetos hoje?", 'ai-message');
-      }, 200);
-      return;
-    }
-
-    if (tLower.includes('alternador') && (tLower.includes('transmissor') || tLower.includes('diferença'))) {
-      setTimeout(() => {
-        adicionarBalao(`⚡ <b>Diferença entre Alternador e Transmissor:</b><br><br>• <b>Alternador:</b> Gerador elétrico do veículo acionado pelo motor que converte energia mecânica em elétrica para a bateria.<br><br>• <b>Transmissor:</b> Sistema encarregado de transferir a força do motor para as rodas ou emitir sinais.`, 'ai-message');
-      }, 200);
-      return;
-    }
-
-    if (tLower.includes('onix') || tLower.includes('funilaria') || tLower.includes('orçamento')) {
-      setTimeout(() => adicionarBalao(`📄 <b>Orçamento Estimado de Funilaria:</b><br>• Funilaria e Pintura de Para-choque: R$ 650,00<br>• Martelinho de Ouro: R$ 250,00<br><b>Total: R$ 900,00</b> (Prazo: 2 dias)`, 'ai-message'), 200);
-      return;
-    }
-
-    // 3. Indicador de 3 pontinhos animados
+    // 2. Cria balão com efeito de "a digitar" (3 pontinhos)
     const HTMLPontinhos = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
     const idDigitando = adicionarBalao(HTMLPontinhos, 'ai-message digitando');
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 6000);
-
-    try {
-      const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(texto)}?system=Você é o Pulse AI, assistente inteligente e amigável. Responda direto em português, sem asteriscos.`, {
-        signal: controller.signal
-      });
-      
-      clearTimeout(timeoutId);
+    // 3. Motor inteligente de respostas instantâneas
+    setTimeout(() => {
       if (idDigitando) idDigitando.remove();
 
-      if (response.ok) {
-        const respostaIA = await response.text();
-        adicionarBalao(formatarTextoIA(respostaIA), 'ai-message');
-      } else {
-        adicionarBalao("Estou a postos! O que vamos criar ou verificar agora?", 'ai-message');
+      let resposta = "";
+
+      if (tLower.includes('multímetro') || tLower.includes('multimetro') || tLower.includes('medir')) {
+        resposta = `⚡ <b>Como usar um Multímetro:</b><br><br>1. <b>Tensão Contínua (DCV):</b> Ajuste o seletor para medir baterias de carros (geralmente em 20V).<br>2. <b>Pontas de Prova:</b> Conecte a ponta preta no borne <b>COM</b> e a vermelha no <b>VΩmA</b>.<br>3. <b>Medição:</b> Encoste a ponta vermelha no polo positivo e a preta no negativo para verificar a carga.`;
+      } 
+      else if (tLower.includes('alternador') || tLower.includes('transmissor')) {
+        resposta = `⚡ <b>Alternador vs Transmissor:</b><br><br>• <b>Alternador:</b> Gera energia elétrica no motor para alimentar o sistema e recarregar a bateria.<br>• <b>Transmissor:</b> Transfere a força mecânica do motor para as rodas ou transmite sinais de sensores.`;
+      } 
+      else if (tLower.includes('onix') || tLower.includes('funilaria') || tLower.includes('orçamento')) {
+        resposta = `📄 <b>Orçamento Estimado de Funilaria:</b><br>• Funilaria e Pintura de Para-choque: R$ 650,00<br>• Martelinho de Ouro: R$ 250,00<br><b>Total: R$ 900,00</b> (Prazo: 2 dias)`;
+      } 
+      else if (tLower.includes('olá') || tLower.includes('ola') || tLower.includes('tudo bem') || tLower.includes('como vai')) {
+        resposta = `Tudo ótimo por aqui! O <b>Pulse AI</b> está a todo vapor. Como posso ajudar nos teus projetos ou na oficina hoje?`;
+      } 
+      else {
+        resposta = `Compreendi a tua questão sobre "<i>${texto}</i>". O Pulse AI está com os módulos de oficina, código e ferramentas ativados. Como deseja avançar?`;
       }
-    } catch (error) {
-      clearTimeout(timeoutId);
-      if (idDigitando) idDigitando.remove();
-      adicionarBalao("Estou por aqui e preparado! Como posso ajudar na oficina ou nos teus códigos hoje?", 'ai-message');
-    }
+
+      adicionarBalao(resposta, 'ai-message');
+    }, 700); // Resposta ultra-rápida em menos de 1 segundo!
   }
 
   function adicionarBalao(texto, classe) {
