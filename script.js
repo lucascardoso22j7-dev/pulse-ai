@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- SISTEMA DE MEMES, VÍDEOS E ADIÇÃO DE FOTOS ---
+  // SISTEMA DE MEMES, VÍDEOS E ADIÇÃO DE FOTOS
   const btnImportarLink = document.getElementById('btnImportarLink');
   const linkMemeInput = document.getElementById('linkMemeInput');
   const playlistMemes = document.getElementById('playlistMemes');
@@ -108,13 +108,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const imgMemePreview = document.getElementById('imgMemePreview');
   const btnGerarMemeComFoto = document.getElementById('btnGerarMemeComFoto');
 
-  // ENVIO DE FOTO PARA ADICIONAR AO VÍDEO DO MEME
   if (uploadFotoMeme) {
     uploadFotoMeme.addEventListener('change', (e) => {
       if (e.target.files && e.target.files[0]) {
         const file = e.target.files[0];
         const imgUrl = URL.createObjectURL(file);
-        
         imgMemePreview.src = imgUrl;
         painelFotoEdicao.style.display = 'block';
         alert('Foto carregada! Agora clica em "Gerar Vídeo Editado" para a IA combinar a foto com o meme.');
@@ -122,20 +120,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // BOTÃO PARA GERAR O NOVO VÍDEO EDITADO COM A FOTO
   if (btnGerarMemeComFoto) {
     btnGerarMemeComFoto.addEventListener('click', () => {
       const idUnico = Math.floor(Math.random() * 899 + 100);
       const nomeNovoMeme = 'Meme Editado #' + idUnico;
       const urlVideoEditado = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
-
       adicionarCardMemeNaTela(nomeNovoMeme, urlVideoEditado, '✨ Com Tua Foto');
       painelFotoEdicao.style.display = 'none';
       alert('Sucesso! O novo vídeo editado com a tua foto foi adicionado à galeria!');
     });
   }
 
-  // IMPORTAR POR LINK
   if (btnImportarLink && linkMemeInput) {
     btnImportarLink.addEventListener('click', () => {
       const url = linkMemeInput.value.trim();
@@ -143,24 +138,20 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Por favor, cole um link válido do TikTok ou Instagram!');
         return;
       }
-
       const idUnico = Math.floor(Math.random() * 899 + 100);
       const nomeMeme = 'Vídeo TikTok #' + idUnico;
       const urlAnimacaoDiferente = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
-
       adicionarCardMemeNaTela(nomeMeme, urlAnimacaoDiferente, '📱 Link Importado');
       linkMemeInput.value = '';
       alert('Link importado! O vídeo está pronto na playlist.');
     });
   }
 
-  // ENVIAR VÍDEO DO APARELHO
   if (novoVideoMeme) {
     novoVideoMeme.addEventListener('change', (e) => {
       if (e.target.files && e.target.files[0]) {
         const file = e.target.files[0];
         const urlVideoReal = URL.createObjectURL(file);
-        
         adicionarCardMemeNaTela(file.name.substring(0, 15), urlVideoReal, '📁 Aparelho');
         alert('Vídeo do seu aparelho adicionado com sucesso!');
       }
@@ -169,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function adicionarCardMemeNaTela(nome, urlVideo, tipoBadge) {
     if (!playlistMemes) return;
-
     const card = document.createElement('div');
     card.className = 'meme-card active-meme';
     card.innerHTML = `
@@ -177,33 +167,35 @@ document.addEventListener('DOMContentLoaded', () => {
       <video src="${urlVideo}" style="width:100%; height:90px; object-fit:cover; border-radius:6px; background:#000;" controls preload="metadata"></video>
       <span style="font-size:11px; font-weight:bold; display:block; margin-top:4px;">${nome}</span>
     `;
-
     document.querySelectorAll('.meme-card').forEach(c => c.classList.remove('active-meme'));
-    
     card.addEventListener('click', (e) => {
       if (e.target.tagName === 'VIDEO') return;
-      
       document.querySelectorAll('.meme-card').forEach(c => c.classList.remove('active-meme'));
       card.classList.add('active-meme');
-      
       const vidEl = card.querySelector('video');
-      if (vidEl) {
-        vidEl.paused ? vidEl.play() : vidEl.pause();
-      }
+      if (vidEl) { vidEl.paused ? vidEl.play() : vidEl.pause(); }
     });
-
     playlistMemes.prepend(card);
   }
 
-  // SISTEMA DO CHAT
+  // SISTEMA DO CHAT E ENVIO BLINDADO
   const btnPerguntar = document.getElementById('btnPerguntar');
   const inputPergunta = document.getElementById('pergunta');
   const btnLimpar = document.getElementById('btnLimpar');
 
-  if (btnPerguntar) btnPerguntar.addEventListener('click', enviarMensagem);
+  if (btnPerguntar) {
+    btnPerguntar.addEventListener('click', (e) => {
+      e.preventDefault();
+      enviarMensagem();
+    });
+  }
+
   if (inputPergunta) {
-    inputPergunta.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviarMensagem(); }
+    inputPergunta.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) { 
+        e.preventDefault(); 
+        enviarMensagem(); 
+      }
     });
   }
 
@@ -250,8 +242,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (data.candidates && data.candidates[0].content.parts[0].text) {
         const respostaIA = data.candidates[0].content.parts[0].text;
         adicionarBalao(respostaIA, 'ai-message');
+      } else if (data.error && data.error.message) {
+        adicionarBalao(`Erro da API: ${data.error.message}`, 'ai-message');
       } else {
-        adicionarBalao("Desculpa, não consegui processar a tua resposta agora. Verifica se a tua chave de API está correta.", 'ai-message');
+        adicionarBalao("Desculpa, não consegui processar a tua resposta agora.", 'ai-message');
       }
     } catch (error) {
       console.error(error);
