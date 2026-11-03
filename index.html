@@ -2,116 +2,99 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pulse AI</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Ícone / Favicon do site -->
+  <link rel="icon" type="image/png" href="logo.png">
+  <!-- Força o carregamento do CSS sem cache -->
+  <link rel="stylesheet" href="style.css?v=2.5">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body id="appBody">
-  <div class="chat-container">
-    <!-- Header com Nova Logo Autêntica (Pulse / Batimento) -->
-    <header class="chat-header">
-      <div class="brand">
-        <div class="logo-pulse-custom">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="2 12 7 12 10 5 14 19 17 12 22 12"></polyline>
-          </svg>
-        </div>
-        <div class="brand-info">
-          <h1>Pulse AI</h1>
-        </div>
-      </div>
+<body>
 
-      <div class="header-actions">
-        <div class="color-picker-box">
-          <label for="color1">🎨</label>
-          <input type="color" id="color1" value="#00b09b">
-          <input type="color" id="color2" value="#8e2de2">
+  <div class="app-container">
+    <!-- BARRA SUPERIOR -->
+    <header class="app-header">
+      <div class="logo-area">
+        <i class="fa-solid fa-wave-square" style="color: #ff003c; font-size: 20px;"></i>
+        <span>Pulse AI</span>
+      </div>
+      <div class="header-controls">
+        <div class="color-pickers">
+          <input type="color" id="color1" value="#ff003c" title="Cor 1 do Degradê">
+          <input type="color" id="color2" value="#0072ff" title="Cor 2 do Degradê">
         </div>
-        <button id="btnLimpar" class="action-btn">🗑️ Limpar</button>
+        <button id="btnLimpar" class="btn-limpar"><i class="fa-solid fa-trash-can"></i> Limpar</button>
       </div>
     </header>
 
-    <!-- Área Principal do Chat -->
-    <main id="aba-chat" class="tab-content active">
-      <div id="historico" class="chat-body">
+    <!-- ABA DO CHAT -->
+    <div id="aba-chat" class="tab-content active">
+      <div class="chat-history" id="historico">
         <div class="message ai-message">
-          <div class="message-content">
-            <div class="bubble">
-              Olá, Lucas! O <b>Pulse AI</b> está pronto. Podes aceder às ferramentas no menu <b>+</b> ou ir diretamente para o estúdio de memes e adicionar as tuas fotos para criar edições virais!
-            </div>
-          </div>
+          <div class="bubble">Olá, Lucas! O <b>Pulse AI</b> está pronto. Podes aceder às ferramentas no menu + ou ir diretamente para o estúdio de memes para criar edições virais!</div>
         </div>
       </div>
 
-      <footer class="chat-footer">
-        <div id="menuAnexo" class="anexo-menu">
-          <button id="btnMenuMemes">🎭 Estúdio de Memes & Fotos</button>
-          <button id="btnMenuOrcamento">🚗 Novo Orçamento de Funilaria (Pai)</button>
-          <button id="btnMenuCortes">🎬 Postar Cortes Automáticos (Galeria)</button>
-          <button id="btnMenuImagem">🎨 Criar Imagem / Animação por Comando</button>
-          <label for="uploadEditarImagem" class="anexo-label-btn">✏️ Editar Foto / Imagem</label>
-          <input type="file" id="uploadEditarImagem" accept="image/*" style="display:none">
-        </div>
-
-        <div class="input-container">
-          <button id="btnMais" class="plus-btn" title="Menu de Ferramentas">+</button>
-          <textarea id="pergunta" rows="1" placeholder="Converse com a IA, peça cores ou clique no +..." autocomplete="off"></textarea>
-          <button id="btnPerguntar" class="send-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="22" y1="2" x2="11" y2="13"></line>
-              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-            </svg>
-          </button>
-        </div>
-      </footer>
-    </main>
-
-    <!-- Seção de Memes e Edição com Fotos -->
-    <section id="aba-memes" class="tab-content visual-studio memes-section">
-      <div class="memes-header-flex">
-        <h2>🎭 Estúdio de Memes Virais & Fotos</h2>
-        <button id="btnVoltarChat" class="main-btn" style="background:#27272a; padding:6px 12px; font-size:12px;">← Voltar ao Chat</button>
-      </div>
-
-      <!-- Barra de Ferramentas: Importar Links, Vídeos e Fotos -->
-      <div class="import-panel-top">
-        <div class="link-import-box">
-          <input type="text" id="linkMemeInput" placeholder="Cole o link do TikTok, Instagram ou Reels...">
-          <button id="btnImportarLink" class="main-btn">🔗 Importar Link</button>
-        </div>
-        <div class="or-divider">ou</div>
-        <label for="novoVideoMeme" class="upload-playlist-btn">📁 Enviar Vídeo</label>
-        <input type="file" id="novoVideoMeme" accept="video/*" style="display:none">
+      <!-- INPUT E BARRA DE ENVIO -->
+      <div class="chat-input-area">
+        <button id="btnMais" class="btn-mais"><i class="fa-solid fa-plus"></i></button>
         
-        <!-- BOTÃO DE ADICIONAR FOTO AO MEME -->
-        <label for="uploadFotoMeme" class="upload-playlist-btn foto-btn">🖼️ Adicionar Fotos</label>
-        <input type="file" id="uploadFotoMeme" accept="image/*" style="display:none">
-      </div>
+        <!-- Menu Flutuante de Anexos / Ferramentas -->
+        <div id="menuAnexo" class="menu-anexo">
+          <button id="btnMenuOrcamento"><i class="fa-solid fa-file-invoice-dollar"></i> Orçamento de Funilaria</button>
+          <button id="btnMenuCortes"><i class="fa-solid fa-video"></i> Gerador de Cortes</button>
+          <button id="btnMenuImagem"><i class="fa-solid fa-image"></i> Gerar Imagem</button>
+          <label for="uploadEditarImagem" class="menu-item-label">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Editar Foto (Careca/Filtro)
+          </label>
+          <input type="file" id="uploadEditarImagem" accept="image/*" style="display: none;">
+          <button id="btnMenuMemes"><i class="fa-solid fa-clapperboard"></i> Estúdio de Memes</button>
+        </div>
 
-      <!-- Área de Prévia da Foto Carregada para Edição -->
-      <div id="painelFotoEdicao" class="foto-edicao-panel" style="display:none;">
-        <div class="foto-preview-box">
-          <img id="imgMemePreview" src="" alt="Sua foto no meme">
-          <div class="foto-info">
-            <span class="badge-status">✨ Foto Pronta para Integrar ao Vídeo</span>
-            <p style="font-size: 12px; color: #a1a1aa; margin-top: 4px;">A tua foto será misturada ao meme selecionado para gerar o novo vídeo editado!</p>
-            <button id="btnGerarMemeComFoto" class="main-btn" style="margin-top: 8px; padding: 6px 12px; font-size: 12px;">⚡ Gerar Vídeo Editado</button>
+        <input type="text" id="pergunta" placeholder="Converse com a IA, peça cores ou clique no +...">
+        <button id="btnPerguntar" class="btn-enviar"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+    </div>
+
+    <!-- ABA DO ESTÚDIO DE MEMES -->
+    <div id="aba-memes" class="tab-content">
+      <div class="memes-header">
+        <button id="btnVoltarChat" class="btn-voltar"><i class="fa-solid fa-arrow-left"></i> Voltar ao Chat</button>
+        <h2>Estúdio de Memes & Cortes</h2>
+      </div>
+      <div class="memes-body">
+        <div class="import-section">
+          <input type="text" id="linkMemeInput" placeholder="Cole o link do TikTok ou Instagram...">
+          <button id="btnImportarLink" class="btn-acao">Importar Link</button>
+          <label class="btn-acao upload-label">
+            📁 Enviar Vídeo <input type="file" id="novoVideoMeme" accept="video/*" style="display:none">
+          </label>
+        </div>
+
+        <div class="import-section" style="margin-top: 10px;">
+          <label class="btn-acao upload-label" style="background: #8e2de2;">
+            📷 Carregar Foto para Edição <input type="file" id="uploadFotoMeme" accept="image/*" style="display:none">
+          </label>
+        </div>
+
+        <div id="painelFotoEdicao" style="display:none; text-align:center; padding: 10px; background: #111; border-radius: 8px; margin-top: 10px;">
+          <img id="imgMemePreview" style="max-height: 120px; border-radius: 6px; margin-bottom: 8px;">
+          <br>
+          <button id="btnGerarMemeComFoto" class="btn-acao" style="background: #00b09b;">✨ Gerar Vídeo Editado</button>
+        </div>
+
+        <div class="playlist-grid" id="playlistMemes">
+          <div class="meme-card active-meme">
+            <div class="badge-pessoas">Destaque</div>
+            <video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" style="width:100%; height:90px; object-fit:cover; border-radius:6px; background:#000;" controls preload="metadata"></video>
+            <span style="font-size:11px; font-weight:bold; display:block; margin-top:4px;">Meme Viral #1</span>
           </div>
         </div>
       </div>
-
-      <!-- Grid de Vídeos e Projetos -->
-      <div class="meme-grid" id="playlistMemes" style="margin-top:16px;">
-        <div class="meme-card active-meme" data-nome="A Discussão do Casal / Dupla">
-          <div class="badge-pessoas">👥 2 Pessoas</div>
-          <video src="https://www.w3schools.com/html/mov_bbb.mp4" style="width:100%; height:90px; object-fit:cover; border-radius:6px; background:#000;" controls preload="metadata"></video>
-          <span style="font-size:11px; font-weight:bold; display:block; margin-top:4px;">A Discussão (Dupla)</span>
-        </div>
-      </div>
-    </section>
-
+    </div>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
