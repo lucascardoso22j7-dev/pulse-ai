@@ -3,6 +3,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const color1 = document.getElementById('color1');
   const color2 = document.getElementById('color2');
 
+  // SISTEMA DE NOME PERSONALIZADO (MEMORIZAÇÃO AUTOMÁTICA)
+  let nomeUtilizador = localStorage.getItem('pulse_user_name');
+
+  if (!nomeUtilizador) {
+    nomeUtilizador = prompt("Olá! Seja bem-vindo ao Pulse AI. Qual é o seu nome?") || "Visitante";
+    localStorage.setItem('pulse_user_name', nomeUtilizador);
+  }
+
+  // Exibir mensagem de boas-vindas personalizada ao carregar
+  if (chatBody) {
+    chatBody.innerHTML = `
+      <div class="message ai-message">
+        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O <b>Pulse AI</b> está pronto. Podes aceder às ferramentas no menu + ou ir diretamente para o estúdio de memes para criar edições virais!</div>
+      </div>
+    `;
+  }
+
   function aplicarDegradeChat(c1, c2) {
     if (chatBody) {
       chatBody.style.background = `linear-gradient(135deg, ${c1}, ${c2}, #000000)`;
@@ -199,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnLimpar) {
     btnLimpar.addEventListener('click', () => {
       if (chatBody) {
-        chatBody.innerHTML = `<div class="message ai-message"><div class="bubble">Conversa reiniciada. Como posso ajudar?</div></div>`;
+        chatBody.innerHTML = `<div class="message ai-message"><div class="bubble">Conversa reiniciada. Como posso ajudar, ${nomeUtilizador}?</div></div>`;
       }
     });
   }
@@ -236,9 +253,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const HTMLPontinhos = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
     const idDigitando = adicionarBalao(HTMLPontinhos, 'ai-message digitando');
 
-    // 4. Chamada à IA Livre (Pollinations)
+    // 4. Chamada à IA Livre com o nome do utilizador no contexto
     try {
-      const promptSistema = encodeURIComponent("És o Pulse AI, um assistente inteligente, especialista em mecânica, tecnologia e cultura geral. Responde em português de forma direta, sem usar asteriscos.");
+      const promptSistema = encodeURIComponent(`És o Pulse AI, um assistente inteligente e prestativo. O utilizador com quem estás a falar chama-se ${nomeUtilizador}. Responde em português de forma direta, sem usar asteriscos.`);
       const promptUsuario = encodeURIComponent(texto);
       
       const response = await fetch(`https://text.pollinations.ai/${promptSistema}%20${promptUsuario}?model=openai`);
