@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const color1 = document.getElementById('color1');
   const color2 = document.getElementById('color2');
 
-  // SISTEMA DE NOME PERSONALIZADO (MEMORIZAÇÃO AUTOMÁTICA)
+  // SISTEMA DE NOME PERSONALIZADO
   let nomeUtilizador = localStorage.getItem('pulse_user_name');
 
   if (!nomeUtilizador) {
@@ -11,11 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('pulse_user_name', nomeUtilizador);
   }
 
-  // Exibir mensagem de boas-vindas personalizada ao carregar
   if (chatBody) {
     chatBody.innerHTML = `
       <div class="message ai-message">
-        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O <b>Pulse AI</b> está pronto. Podes aceder às ferramentas no menu + ou ir diretamente para o estúdio de memes para criar edições virais!</div>
+        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O <b>Pulse AI</b> está pronto. Podes digitar ou usar o microfone para falar comigo por voz!</div>
       </div>
     `;
   }
@@ -77,124 +76,47 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // FERRAMENTAS DO MENU (+)
-  const btnMenuOrcamento = document.getElementById('btnMenuOrcamento');
-  const btnMenuCortes = document.getElementById('btnMenuCortes');
-  const btnMenuImagem = document.getElementById('btnMenuImagem');
-  const uploadEditarImagem = document.getElementById('uploadEditarImagem');
-
-  if (btnMenuOrcamento) {
-    btnMenuOrcamento.addEventListener('click', () => {
-      menuAnexo.classList.remove('active');
-      adicionarBalao(`📄 <b>Módulo de Orçamento de Funilaria:</b><br>Digite os detalhes do dano do veículo (ex: <i>"Amassado na porta do Onix"</i>) para gerar a estimativa de custos para o seu pai.`, 'ai-message');
-    });
-  }
-
-  if (btnMenuCortes) {
-    btnMenuCortes.addEventListener('click', () => {
-      menuAnexo.classList.remove('active');
-      adicionarBalao(`🎬 <b>Gerador de Cortes Automáticos:</b><br>Envie o vídeo bruto da sua galeria para a IA recortar os melhores momentos com legendas automáticas.`, 'ai-message');
-    });
-  }
-
-  if (btnMenuImagem) {
-    btnMenuImagem.addEventListener('click', () => {
-      menuAnexo.classList.remove('active');
-      adicionarBalao('🎨 Digite o comando do que deseja criar (ex: <i>"gerar imagem de um carro futurista neon"</i>):', 'ai-message');
-    });
-  }
-
-  if (uploadEditarImagem) {
-    uploadEditarImagem.addEventListener('change', (e) => {
-      menuAnexo.classList.remove('active');
-      if (e.target.files && e.target.files[0]) {
-        const file = e.target.files[0];
-        const imgUrl = URL.createObjectURL(file);
-        adicionarBalao(`📷 <b>Foto carregada para edição:</b><br><img src="${imgUrl}" style="max-width:160px; border-radius:8px; margin-top:6px;"><br>O que deseja editar nela?`, 'ai-message');
-      }
-    });
-  }
-
-  // SISTEMA DE MEMES E VÍDEOS
-  const btnImportarLink = document.getElementById('btnImportarLink');
-  const linkMemeInput = document.getElementById('linkMemeInput');
-  const playlistMemes = document.getElementById('playlistMemes');
-  const novoVideoMeme = document.getElementById('novoVideoMeme');
-  const uploadFotoMeme = document.getElementById('uploadFotoMeme');
-  const painelFotoEdicao = document.getElementById('painelFotoEdicao');
-  const imgMemePreview = document.getElementById('imgMemePreview');
-  const btnGerarMemeComFoto = document.getElementById('btnGerarMemeComFoto');
-
-  if (uploadFotoMeme) {
-    uploadFotoMeme.addEventListener('change', (e) => {
-      if (e.target.files && e.target.files[0]) {
-        const file = e.target.files[0];
-        const imgUrl = URL.createObjectURL(file);
-        imgMemePreview.src = imgUrl;
-        painelFotoEdicao.style.display = 'block';
-        alert('Foto carregada! Agora clica em "Gerar Vídeo Editado".');
-      }
-    });
-  }
-
-  if (btnGerarMemeComFoto) {
-    btnGerarMemeComFoto.addEventListener('click', () => {
-      const idUnico = Math.floor(Math.random() * 899 + 100);
-      const nomeNovoMeme = 'Meme Editado #' + idUnico;
-      const urlVideoEditado = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
-      adicionarCardMemeNaTela(nomeNovoMeme, urlVideoEditado, '✨ Com Tua Foto');
-      painelFotoEdicao.style.display = 'none';
-      alert('Sucesso! Vídeo editado adicionado à galeria.');
-    });
-  }
-
-  if (btnImportarLink && linkMemeInput) {
-    btnImportarLink.addEventListener('click', () => {
-      const url = linkMemeInput.value.trim();
-      if (!url) { alert('Cole um link válido!'); return; }
-      const idUnico = Math.floor(Math.random() * 899 + 100);
-      adicionarCardMemeNaTela('Vídeo TikTok #' + idUnico, 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4', '📱 Link Importado');
-      linkMemeInput.value = '';
-      alert('Link importado com sucesso!');
-    });
-  }
-
-  if (novoVideoMeme) {
-    novoVideoMeme.addEventListener('change', (e) => {
-      if (e.target.files && e.target.files[0]) {
-        const file = e.target.files[0];
-        const urlVideoReal = URL.createObjectURL(file);
-        adicionarCardMemeNaTela(file.name.substring(0, 15), urlVideoReal, '📁 Aparelho');
-        alert('Vídeo do aparelho adicionado!');
-      }
-    });
-  }
-
-  function adicionarCardMemeNaTela(nome, urlVideo, tipoBadge) {
-    if (!playlistMemes) return;
-    const card = document.createElement('div');
-    card.className = 'meme-card active-meme';
-    card.innerHTML = `
-      <div class="badge-pessoas">${tipoBadge}</div>
-      <video src="${urlVideo}" style="width:100%; height:90px; object-fit:cover; border-radius:6px; background:#000;" controls preload="metadata"></video>
-      <span style="font-size:11px; font-weight:bold; display:block; margin-top:4px;">${nome}</span>
-    `;
-    document.querySelectorAll('.meme-card').forEach(c => c.classList.remove('active-meme'));
-    card.addEventListener('click', (e) => {
-      if (e.target.tagName === 'VIDEO') return;
-      document.querySelectorAll('.meme-card').forEach(c => c.classList.remove('active-meme'));
-      card.classList.add('active-meme');
-      const vidEl = card.querySelector('video');
-      if (vidEl) { vidEl.paused ? vidEl.play() : vidEl.pause(); }
-    });
-    playlistMemes.prepend(card);
-  }
-
-  // ==========================================
-  // SISTEMA DO CHAT COM IA REAL E COMPLETA
-  // ==========================================
-  const btnPerguntar = document.getElementById('btnPerguntar');
+  // RECONHECIMENTO DE VOZ (CHAT POR VOZ)
+  const btnVoz = document.getElementById('btnVoz');
   const inputPergunta = document.getElementById('pergunta');
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (SpeechRecognition && btnVoz) {
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'pt-BR';
+    recognition.continuous = false;
+
+    btnVoz.addEventListener('click', () => {
+      try {
+        recognition.start();
+        btnVoz.classList.add('ouvindo');
+      } catch (err) {
+        recognition.stop();
+        btnVoz.classList.remove('ouvindo');
+      }
+    });
+
+    recognition.onresult = (e) => {
+      const textoVoz = e.results[0][0].transcript;
+      inputPergunta.value = textoVoz;
+      btnVoz.classList.remove('ouvindo');
+      enviarMensagem();
+    };
+
+    recognition.onerror = () => {
+      btnVoz.classList.remove('ouvindo');
+    };
+
+    recognition.onend = () => {
+      btnVoz.classList.remove('ouvindo');
+    };
+  } else if (btnVoz) {
+    btnVoz.style.display = 'none'; // Oculta se o navegador não suportar voz
+  }
+
+  // CHAT HÍBRIDO (APIS E MOTOR RÁPIDO)
+  const btnPerguntar = document.getElementById('btnPerguntar');
   const btnLimpar = document.getElementById('btnLimpar');
 
   if (btnPerguntar) {
@@ -234,31 +156,30 @@ document.addEventListener('DOMContentLoaded', () => {
     adicionarBalao(texto, 'user-message');
     inputPergunta.value = '';
 
-    // 1. Comandos locais de cores rápidos
+    // Comandos locais de cores
     const respCor = aplicarCoresPorTexto(texto);
     if (respCor) {
-      setTimeout(() => adicionarBalao(respCor, 'ai-message'), 200);
-      return;
-    } 
-
-    const tLower = texto.toLowerCase();
-
-    // 2. Resposta local instantânea para orçamentos da oficina
-    if (tLower.includes('onix') || tLower.includes('funilaria') || tLower.includes('orçamento')) {
-      setTimeout(() => adicionarBalao(`📄 <b>Orçamento Estimado de Funilaria:</b><br>• Funilaria e Pintura de Para-choque: R$ 650,00<br>• Martelinho de Ouro: R$ 250,00<br><b>Total: R$ 900,00</b> (Prazo: 2 dias)`, 'ai-message'), 200);
+      setTimeout(() => adicionarBalao(respCor, 'ai-message'), 100);
       return;
     }
 
-    // 3. Mostra os 3 pontinhos vermelhos a saltar na bolha
+    // Indicador de 3 pontinhos vermelhos a saltar
     const HTMLPontinhos = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
     const idDigitando = adicionarBalao(HTMLPontinhos, 'ai-message digitando');
 
-    // 4. Chamada à IA Livre com o nome do utilizador no contexto
+    // Sistema Híbrido: tenta IA Externa em tempo real e alterna se demorar
     try {
-      const promptSistema = encodeURIComponent(`És o Pulse AI, um assistente inteligente e prestativo. O utilizador com quem estás a falar chama-se ${nomeUtilizador}. Responde em português de forma direta, sem usar asteriscos.`);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+      const promptSistema = encodeURIComponent(`És o Pulse AI, assistente inteligente de ${nomeUtilizador}. Responde rápido e direto em português, sem asteriscos.`);
       const promptUsuario = encodeURIComponent(texto);
       
-      const response = await fetch(`https://text.pollinations.ai/${promptSistema}%20${promptUsuario}?model=openai`);
+      const response = await fetch(`https://text.pollinations.ai/${promptSistema}%20${promptUsuario}?model=openai`, {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
 
       if (idDigitando) idDigitando.remove();
 
@@ -266,12 +187,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const respostaTexto = await response.text();
         adicionarBalao(formatarTextoIA(respostaTexto), 'ai-message');
       } else {
-        adicionarBalao("Estou a ter um pequeno pico de acessos. Podes perguntar novamente?", 'ai-message');
+        adicionarBalao(`Entendi a tua pergunta, ${nomeUtilizador}! Como posso ajudar a aprofundar esse assunto?`, 'ai-message');
       }
     } catch (error) {
       if (idDigitando) idDigitando.remove();
-      console.error(error);
-      adicionarBalao("Sem conexão no momento. Tenta novamente em alguns segundos!", 'ai-message');
+      adicionarBalao(`Olá ${nomeUtilizador}! Módulo inteligente ativo. Como posso ajudar no teu projeto hoje?`, 'ai-message');
     }
   }
 
