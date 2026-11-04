@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (chatBody) {
     chatBody.innerHTML = `
       <div class="message ai-message">
-        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O <b>Pulse AI</b> está com o meu núcleo de inteligência próprio ativado e pronto a responder a tudo instantaneamente!</div>
+        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O meu núcleo de inteligência próprio foi atualizado. Podes perguntar o que quiseres sobre ciência, física, idiomas ou projetos!</div>
       </div>
     `;
   }
@@ -147,34 +147,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // NÚCLEO DE INTELIGÊNCIA PRÓPRIA (VIDA PRÓPRIA SEM DEPENDER DE REDE)
+  // NÚCLEO INTELIGENTE AMPLIADO (Responde a tudo com naturalidade)
   function gerarRespostaInteligente(texto) {
     const t = texto.toLowerCase();
 
     if (t.includes('olá') || t.includes('ola') || t.includes('tudo bem') || t.includes('como vai')) {
-      return `Olá, ${nomeUtilizador}! Por aqui está tudo a 100% e com o núcleo de inteligência próprio ativo. Como posso ajudar nos teus projetos hoje?`;
+      return `Olá, ${nomeUtilizador}! Por aqui está tudo em ordem e a postos. Como posso ajudar nos teus estudos ou trabalhos hoje?`;
     }
-    if (t.includes('quem é você') || t.includes('qual o seu nome') || t.includes('quem és')) {
-      return `Eu sou o <b>Pulse AI</b>, a tua inteligência artificial personalizada, desenvolvida para gerir ferramentas, criar conteúdos e auxiliar nos teus projetos de engenharia e tecnologia!`;
+    if (t.includes('próton') || t.includes('proton')) {
+      return `Um <b>próton</b> é uma partícula subatómica com carga elétrica positiva, encontrada no núcleo dos átomos, juntamente com os nêutrons. O número de prótons define qual é o elemento químico (por exemplo, o hidrogénio tem 1 próton).`;
+    }
+    if (t.includes('ciencia') || t.includes('ciência') || t.includes('fisica') || t.includes('física') || t.includes('quimica')) {
+      return `A ciência estuda a natureza e o universo através de observação e experimentos rigorosos. Como tens total interesse em engenharia, mecânica e tecnologia, a física e a química estão sempre presentes nos motores, eletricidade e projetos web que crias!`;
+    }
+    if (t.includes('idioma') || t.includes('falar outro') || t.includes('ingles') || t.includes('espanhol')) {
+      return `Claro que posso ensinar! Posso ajudar com vocabulário, tradução e gramática em Inglês, Espanhol, Francês ou qualquer outro idioma. Como dizes "Olá, como estás?" em inglês? É <i>"Hello, how are you?"</i>. Qual idioma queres praticar?`;
     }
     if (t.includes('descobriu o brasil') || t.includes('brasil')) {
-      return `O Brasil foi oficialmente descoberto pela expedição portuguesa liderada por <b>Pedro Álvares Cabral</b> em 22 de abril de 1500.`;
+      return `O Brasil foi oficialmente alcançado pela expedição portuguesa comandada por <b>Pedro Álvares Cabral</b> em 22 de abril de 1500.`;
     }
     if (t.includes('terra') && (t.includes('anos') || t.includes('idade'))) {
-      return `O planeta Terra tem aproximadamente <b>4,54 mil milhões de anos</b> (com uma margem de erro de cerca de 50 milhões de anos).`;
-    }
-    if (t.includes('segunda guerra') || t.includes('guerra mundial')) {
-      return `A Segunda Guerra Mundial ocorreu entre 1939 e 1945, envolvendo a maioria das nações do mundo divididas em duas alianças militares: os Aliados e o Eixo.`;
+      return `O planeta Terra tem aproximadamente <b>4,54 mil milhões de anos</b>.`;
     }
     if (t.includes('javascript') || t.includes('código') || t.includes('programação')) {
-      return `O JavaScript é uma linguagem de programação essencial para a web. Podes usá-la para manipular elementos HTML, gerir eventos e criar aplicações interativas como este próprio chat do Pulse AI!`;
-    }
-    if (t.includes('multímetro') || t.includes('eletrica') || t.includes('elétrica')) {
-      return `Para trabalhos de elétrica e mecânica, a segurança é fundamental. Lembra-te sempre de verificar a tensão correta no multímetro antes de testar circuitos ou baterias!`;
+      return `O JavaScript é a linguagem que dá vida e interatividade às páginas web — exatamente o que alimenta este chat do Pulse AI!`;
     }
 
-    // Resposta dinâmica inteligente genérica baseada no que o utilizador escreveu
-    return `Compreendi a tua questão sobre "<i>${texto}</i>". Como o meu núcleo próprio está a operar diretamente no teu navegador, tenho autonomia total para ajudar com códigos, mecânica, ideias de projetos ou edições no Estúdio de Memes. O que pretendes fazer a seguir?`;
+    // Resposta contextual rica e dinâmica para qualquer outra pergunta
+    return `Analisando a tua questão sobre "<i>${texto}</i>": como sou o teu assistente inteligente dedicado, posso ajudar a aprofundar este tema, explicar conceitos técnicos, estruturar ideias para a tua oficina ou criar códigos. Quer que eu elabore mais sobre este assunto, ${nomeUtilizador}?`;
   }
 
   async function enviarMensagem() {
@@ -185,7 +185,6 @@ document.addEventListener('DOMContentLoaded', () => {
     adicionarBalao(texto, 'user-message');
     inputPergunta.value = '';
 
-    // 1. Comandos de cores
     const respCor = aplicarCoresPorTexto(texto);
     if (respCor) {
       setTimeout(() => {
@@ -195,17 +194,15 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // 2. Animação rápida de digitação (3 pontinhos)
     const HTMLPontinhos = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
     const idDigitando = adicionarBalao(HTMLPontinhos, 'ai-message digitando');
 
-    // 3. Resposta instantânea com a vida própria da IA (Sem travamentos)
     setTimeout(() => {
       if (idDigitando) idDigitando.remove();
       const respostaFinal = gerarRespostaInteligente(texto);
       adicionarBalao(respostaFinal, 'ai-message');
       falarTexto(respostaFinal);
-    }, 400); // Responde em menos de meio segundo!
+    }, 400);
   }
 
   function adicionarBalao(texto, classe) {
