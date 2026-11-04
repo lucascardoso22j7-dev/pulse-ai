@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (chatBody) {
     chatBody.innerHTML = `
       <div class="message ai-message">
-        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O meu núcleo de inteligência próprio foi atualizado. Podes perguntar o que quiseres sobre ciência, física, idiomas ou projetos!</div>
+        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O Pulse AI está com o novo motor dinâmico ativo. Podes perguntar o que quiseres!</div>
       </div>
     `;
   }
@@ -147,34 +147,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // NÚCLEO INTELIGENTE AMPLIADO (Responde a tudo com naturalidade)
-  function gerarRespostaInteligente(texto) {
+  // NÚCLEO DINÂMICO INTELIGENTE
+  function gerarRespostaDinamica(texto) {
     const t = texto.toLowerCase();
+    const hoje = new Date();
+    const dataFormatada = hoje.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
     if (t.includes('olá') || t.includes('ola') || t.includes('tudo bem') || t.includes('como vai')) {
-      return `Olá, ${nomeUtilizador}! Por aqui está tudo em ordem e a postos. Como posso ajudar nos teus estudos ou trabalhos hoje?`;
+      return `Olá, ${nomeUtilizador}! Por aqui está tudo ótimo a 100%. Como posso ajudar nos teus projetos ou estudos hoje?`;
     }
-    if (t.includes('próton') || t.includes('proton')) {
-      return `Um <b>próton</b> é uma partícula subatómica com carga elétrica positiva, encontrada no núcleo dos átomos, juntamente com os nêutrons. O número de prótons define qual é o elemento químico (por exemplo, o hidrogénio tem 1 próton).`;
+    if (t.includes('dia') && (t.includes('hoje') || t.includes('data') || t.includes('que dia'))) {
+      return `Hoje é ${dataFormatada}.`;
     }
-    if (t.includes('ciencia') || t.includes('ciência') || t.includes('fisica') || t.includes('física') || t.includes('quimica')) {
-      return `A ciência estuda a natureza e o universo através de observação e experimentos rigorosos. Como tens total interesse em engenharia, mecânica e tecnologia, a física e a química estão sempre presentes nos motores, eletricidade e projetos web que crias!`;
+    if (t.includes('ph') || t.includes('água') || t.includes('agua')) {
+      return `💧 <b>Resumo sobre o pH da água:</b><br>O pH (Potencial Hidrogeniônico) mede o grau de acidez, neutralidade ou basicidade da água numa escala de 0 a 14:<br>• <b>Abaixo de 7:</b> Água ácida.<br>• <b>7:</b> Água neutra (ideal para consumo humano purificada).<br>• <b>Acima de 7:</b> Água alcalina (básica).`;
     }
-    if (t.includes('idioma') || t.includes('falar outro') || t.includes('ingles') || t.includes('espanhol')) {
-      return `Claro que posso ensinar! Posso ajudar com vocabulário, tradução e gramática em Inglês, Espanhol, Francês ou qualquer outro idioma. Como dizes "Olá, como estás?" em inglês? É <i>"Hello, how are you?"</i>. Qual idioma queres praticar?`;
+    if (t.includes('próton') || t.includes('pótron') || t.includes('atom') || t.includes('átomo')) {
+      return `Um <b>próton</b> é uma partícula subatómica com carga elétrica positiva, situada no núcleo do átomo junto com os nêutrons.`;
     }
-    if (t.includes('descobriu o brasil') || t.includes('brasil')) {
-      return `O Brasil foi oficialmente alcançado pela expedição portuguesa comandada por <b>Pedro Álvares Cabral</b> em 22 de abril de 1500.`;
-    }
-    if (t.includes('terra') && (t.includes('anos') || t.includes('idade'))) {
-      return `O planeta Terra tem aproximadamente <b>4,54 mil milhões de anos</b>.`;
+    if (t.includes('ciencia') || t.includes('ciência') || t.includes('fisica') || t.includes('física')) {
+      return `A ciência estuda o funcionamento do universo através de métodos experimentais. Na mecânica e na eletrónica (como nos teus trabalhos na oficina), aplicamos princípios físicos fundamentais o tempo todo!`;
     }
     if (t.includes('javascript') || t.includes('código') || t.includes('programação')) {
-      return `O JavaScript é a linguagem que dá vida e interatividade às páginas web — exatamente o que alimenta este chat do Pulse AI!`;
+      return `O JavaScript é a linguagem de programação que usamos para criar a interatividade e a lógica deste painel do Pulse AI!`;
     }
 
-    // Resposta contextual rica e dinâmica para qualquer outra pergunta
-    return `Analisando a tua questão sobre "<i>${texto}</i>": como sou o teu assistente inteligente dedicado, posso ajudar a aprofundar este tema, explicar conceitos técnicos, estruturar ideias para a tua oficina ou criar códigos. Quer que eu elabore mais sobre este assunto, ${nomeUtilizador}?`;
+    // Resposta inteligente genérica avançada para qualquer outra pergunta
+    return `Compreendi a tua questão sobre "<i>${texto}</i>". Como assistente técnico e de engenharia do ${nomeUtilizador}, estou aqui para ajudar a desenvolver ideias, explicar conceitos ou criar ferramentas. O que gostarias de detalhar mais?`;
   }
 
   async function enviarMensagem() {
@@ -199,10 +198,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setTimeout(() => {
       if (idDigitando) idDigitando.remove();
-      const respostaFinal = gerarRespostaInteligente(texto);
+      const respostaFinal = gerarRespostaDinamica(texto);
       adicionarBalao(respostaFinal, 'ai-message');
       falarTexto(respostaFinal);
-    }, 400);
+    }, 300);
   }
 
   function adicionarBalao(texto, classe) {
