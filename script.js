@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const color1 = document.getElementById('color1');
   const color2 = document.getElementById('color2');
 
-  let modoVozAtivo = false; // Controle para só falar se usar o microfone
+  let modoVozAtivo = false;
   let nomeUtilizador = localStorage.getItem('pulse_user_name');
 
   if (!nomeUtilizador) {
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (chatBody) {
     chatBody.innerHTML = `
       <div class="message ai-message">
-        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O <b>Pulse AI</b> está pronto. Como posso ajudar você hoje?</div>
+        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O <b>Pulse AI</b> está pronto. O que vamos pesquisar ou criar hoje?</div>
       </div>
     `;
   }
@@ -43,7 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return null;
   }
 
-  // SÍNTESE DE VOZ (APENAS SE O USUÁRIO ATIVAR POR VOZ)
   function falarTexto(texto) {
     if (modoVozAtivo && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
@@ -52,11 +51,11 @@ document.addEventListener('DOMContentLoaded', () => {
       utterance.lang = 'pt-BR';
       utterance.rate = 1.0;
       window.speechSynthesis.speak(utterance);
-      modoVozAtivo = false; // Reseta após falar
+      modoVozAtivo = false;
     }
   }
 
-  // BOTÃO (+) E MENU FLUTUANTE
+  // BOTÃO (+) E MENU
   const btnMais = document.getElementById('btnMais');
   const menuAnexo = document.getElementById('menuAnexo');
 
@@ -89,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // CHAT POR VOZ (Microfone)
+  // CHAT POR VOZ
   const btnVoz = document.getElementById('btnVoz');
   const inputPergunta = document.getElementById('pergunta');
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -100,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnVoz.addEventListener('click', () => {
       try {
-        modoVozAtivo = true; // Ativa a resposta por voz apenas quando clica no mic
+        modoVozAtivo = true;
         recognition.start();
         btnVoz.classList.add('ouvindo');
       } catch (err) {
@@ -120,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     recognition.onend = () => btnVoz.classList.remove('ouvindo');
   }
 
-  // PROCESSAMENTO DO CHAT E RESPOSTAS
+  // EVENTOS DE ENVIO
   const btnPerguntar = document.getElementById('btnPerguntar');
   const btnLimpar = document.getElementById('btnLimpar');
 
@@ -161,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
     adicionarBalao(texto, 'user-message');
     inputPergunta.value = '';
 
-    // 1. Respostas locais de comandos rápidos
+    // Comandos visuais rápidos de cores
     const respCor = aplicarCoresPorTexto(texto);
     if (respCor) {
       setTimeout(() => {
@@ -171,23 +170,15 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // 2. Pontinhos vermelhos digitando
+    // Animação de digitação (3 pontinhos vermelhos)
     const HTMLPontinhos = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
     const idDigitando = adicionarBalao(HTMLPontinhos, 'ai-message digitando');
 
-    // 3. Chamada de IA com Fallback Inteligente
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 segundos para evitar timeout prematuro
+      // Usando modelo otimizado e direto da Pollinations para máxima velocidade
+      const encodedPrompt = encodeURIComponent(`Responda em português brasileiro de forma direta e natural: ${texto}`);
+      const response = await fetch(`https://text.pollinations.ai/${encodedPrompt}?model=deepseek`);
 
-      const promptSistema = encodeURIComponent(`Você é o Pulse AI, assistente virtual inteligente do ${nomeUtilizador}. Responda em português brasileiro de forma direta e útil.`);
-      const promptUsuario = encodeURIComponent(texto);
-      
-      const response = await fetch(`https://text.pollinations.ai/${promptSistema}%20${promptUsuario}?model=openai`, {
-        signal: controller.signal
-      });
-      
-      clearTimeout(timeoutId);
       if (idDigitando) idDigitando.remove();
 
       if (response.ok) {
@@ -196,31 +187,12 @@ document.addEventListener('DOMContentLoaded', () => {
         adicionarBalao(textoFormatado, 'ai-message');
         falarTexto(respostaTexto);
       } else {
-        gerarRespostaFallback(texto);
+        adicionarBalao("Tive um pequeno atraso ao consultar a IA. Podes repetir a pergunta?", 'ai-message');
       }
     } catch (error) {
       if (idDigitando) idDigitando.remove();
-      gerarRespostaFallback(texto);
+      adicionarBalao("Erro de conexão com o servidor de IA. Verifica a tua internet e tenta novamente.", 'ai-message');
     }
-  }
-
-  // MOTOR LOCAL DE FALLBACK PARA GARANTIR RESPOSTA SEMPRE
-  function gerarRespostaFallback(texto) {
-    const t = texto.toLowerCase();
-    let resp = "";
-
-    if (t.includes('brasil') || t.includes('descobriu')) {
-      resp = "O Brasil foi oficialmente descoberto pela expedição portuguesa comandada por <b>Pedro Álvares Cabral</b> em 22 de abril de 1500.";
-    } else if (t.includes('segunda guerra') || t.includes('guerra mundial')) {
-      resp = "A <b>Segunda Guerra Mundial (1939-1945)</b> foi um confronto global entre os Aliados (EUA, Reino Unido, URSS, etc.) e o Eixo (Alemanha, Itália, Japão). Terminou em 1945 com a vitória dos Aliados após a rendição da Alemanha e o uso das bombas atômicas no Japão.";
-    } else if (t.includes('eletrica') || t.includes('elétrica') || t.includes('curso')) {
-      resp = "Para aprender elétrica, recomendo começar pelos conceitos básicos de <b>Tensão (Volts)</b>, <b>Corrente (Amperes)</b> e <b>Resistência (Ohms)</b>, além do uso de multímetro e leitura de diagramas de instalações e comandos elétricos.";
-    } else {
-      resp = `Compreendi sua dúvida sobre "<i>${texto}</i>". O Pulse AI está processando novas consultas. Como posso ajudar mais?`;
-    }
-
-    adicionarBalao(resp, 'ai-message');
-    falarTexto(resp);
   }
 
   function adicionarBalao(texto, classe) {
