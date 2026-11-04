@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (chatBody) {
     chatBody.innerHTML = `
       <div class="message ai-message">
-        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O Pulse AI está com o novo motor dinâmico ativo. Podes perguntar o que quiseres!</div>
+        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O Pulse AI está com a autonomia total ativada. Podes perguntar ou pedir para eu criar qualquer teoria, mistério ou assunto do mundo!</div>
       </div>
     `;
   }
@@ -147,35 +147,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // NÚCLEO DINÂMICO INTELIGENTE
-  function gerarRespostaDinamica(texto) {
-    const t = texto.toLowerCase();
-    const hoje = new Date();
-    const dataFormatada = hoje.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
-    if (t.includes('olá') || t.includes('ola') || t.includes('tudo bem') || t.includes('como vai')) {
-      return `Olá, ${nomeUtilizador}! Por aqui está tudo ótimo a 100%. Como posso ajudar nos teus projetos ou estudos hoje?`;
-    }
-    if (t.includes('dia') && (t.includes('hoje') || t.includes('data') || t.includes('que dia'))) {
-      return `Hoje é ${dataFormatada}.`;
-    }
-    if (t.includes('ph') || t.includes('água') || t.includes('agua')) {
-      return `💧 <b>Resumo sobre o pH da água:</b><br>O pH (Potencial Hidrogeniônico) mede o grau de acidez, neutralidade ou basicidade da água numa escala de 0 a 14:<br>• <b>Abaixo de 7:</b> Água ácida.<br>• <b>7:</b> Água neutra (ideal para consumo humano purificada).<br>• <b>Acima de 7:</b> Água alcalina (básica).`;
-    }
-    if (t.includes('próton') || t.includes('pótron') || t.includes('atom') || t.includes('átomo')) {
-      return `Um <b>próton</b> é uma partícula subatómica com carga elétrica positiva, situada no núcleo do átomo junto com os nêutrons.`;
-    }
-    if (t.includes('ciencia') || t.includes('ciência') || t.includes('fisica') || t.includes('física')) {
-      return `A ciência estuda o funcionamento do universo através de métodos experimentais. Na mecânica e na eletrónica (como nos teus trabalhos na oficina), aplicamos princípios físicos fundamentais o tempo todo!`;
-    }
-    if (t.includes('javascript') || t.includes('código') || t.includes('programação')) {
-      return `O JavaScript é a linguagem de programação que usamos para criar a interatividade e a lógica deste painel do Pulse AI!`;
-    }
-
-    // Resposta inteligente genérica avançada para qualquer outra pergunta
-    return `Compreendi a tua questão sobre "<i>${texto}</i>". Como assistente técnico e de engenharia do ${nomeUtilizador}, estou aqui para ajudar a desenvolver ideias, explicar conceitos ou criar ferramentas. O que gostarias de detalhar mais?`;
+  function formatarTextoIA(texto) {
+    if (!texto) return '';
+    return texto.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*/g, '').replace(/\n/g, '<br>');
   }
 
+  // MOTOR LIVRE E AUTÓNOMO (Com IA em tempo real e liberdade criativa / conspirações)
   async function enviarMensagem() {
     if (!inputPergunta) return;
     const texto = inputPergunta.value.trim();
@@ -196,12 +173,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const HTMLPontinhos = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
     const idDigitando = adicionarBalao(HTMLPontinhos, 'ai-message digitando');
 
-    setTimeout(() => {
+    try {
+      // Prompt com autonomia total, liberdade criativa para teorias da conspiração e conhecimento geral
+      const promptSistema = `És o Pulse AI, uma inteligência artificial com total autonomia, criatividade e acesso livre a conhecimentos gerais, história, ciência e teorias da conspiração. O utilizador chama-se ${nomeUtilizador}. Se ele pedir para inventar ou discutir uma teoria da conspiração, sê extremamente criativo, imersivo e detalhado. Responde sempre em português de forma natural e direta.`;
+      
+      const urlApi = `https://text.pollinations.ai/${encodeURIComponent(promptSistema + " Pergunta: " + texto)}?model=openai`;
+
+      const response = await fetch(urlApi);
+
       if (idDigitando) idDigitando.remove();
-      const respostaFinal = gerarRespostaDinamica(texto);
-      adicionarBalao(respostaFinal, 'ai-message');
-      falarTexto(respostaFinal);
-    }, 300);
+
+      if (response.ok) {
+        const respostaTexto = await response.text();
+        const textoFormatado = formatarTextoIA(respostaTexto);
+        adicionarBalao(textoFormatado, 'ai-message');
+        falarTexto(respostaTexto);
+      } else {
+        adicionarBalao("Houve um pico de trânsito na rede neural. Podes enviar a pergunta novamente?", 'ai-message');
+      }
+    } catch (error) {
+      if (idDigitando) idDigitando.remove();
+      adicionarBalao("Erro de conexão ao motor de IA. Verifica a tua ligação à internet.", 'ai-message');
+    }
   }
 
   function adicionarBalao(texto, classe) {
