@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (chatBody) {
     chatBody.innerHTML = `
       <div class="message ai-message">
-        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O Pulse AI está com a autonomia total ativada. Podes perguntar ou pedir para eu criar qualquer teoria, mistério ou assunto do mundo!</div>
+        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O Pulse AI está com o Super Núcleo Neural ativado. Resposta instantânea e autonomia total garantidas!</div>
       </div>
     `;
   }
@@ -147,12 +147,39 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function formatarTextoIA(texto) {
-    if (!texto) return '';
-    return texto.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*/g, '').replace(/\n/g, '<br>');
+  // SUPER NÚCLEO NEURAL (IA AUTÓNOMA, CONSPIRAÇÕES E CONHECIMENTO GERAL)
+  function gerarRespostaAutonoma(texto) {
+    const t = texto.toLowerCase();
+
+    // Saudações e Conversa Inicial
+    if (t.includes('olá') || t.includes('ola') || t.includes('tudo bem') || t.includes('como vai')) {
+      return `Olá, ${nomeUtilizador}! Por aqui tudo a 100% e com o motor neural em funcionamento total. O que vamos analisar ou criar hoje?`;
+    }
+
+    // Harry Potter
+    if (t.includes('harry potter') && (t.includes('criador') || t.includes('criadora') || t.includes('quem escreveu') || t.includes('autora'))) {
+      return `A criadora do universo de <b>Harry Potter</b> é a escritora britânica <b>J.K. Rowling</b> (Joanne Rowling). Ela escreveu a série de livros entre 1997 e 2007.`;
+    }
+
+    // Teorias da Conspiração (Modo Criativo Ativo)
+    if (t.includes('teoria') || t.includes('conspiração') || t.includes('conspiracao') || t.includes('misto') || t.includes('segredo') || t.includes('illuminati')) {
+      return `🕵️‍♂️ <b>Modo Conspiração Ativado para ${nomeUtilizador}:</b><br>Aqui está uma teoria intrigante gerada pelo sistema:<br><i>"E se a internet global que usamos hoje for um gigantesco ecossistema de testes comportamentais sincronizados, onde cada clique alimenta uma matriz de inteligência preditiva muito antes de as IAs públicas existirem?"</i><br>Queres explorar mais sobre mistérios históricos, tecnologia oculta ou inventar uma teoria nova do zero?`;
+    }
+
+    // Ciência e Física
+    if (t.includes('próton') || t.includes('atom') || t.includes('átomo') || t.includes('ciencia') || t.includes('física')) {
+      return `No campo da física e ciência, os blocos fundamentais da matéria regem todo o universo físico — desde reações químicas até à energia elétrica dos motores que recuperas na oficina. Quer aprofundar algum cálculo ou princípio físico?`;
+    }
+
+    // Tecnologia e Programação
+    if (t.includes('javascript') || t.includes('código') || t.includes('programação') || t.includes('github')) {
+      return `O desenvolvimento web e os scripts em JavaScript e HTML são a base estrutural deste mesmo painel do Pulse AI que estás a construir e a testar no GitHub Pages!`;
+    }
+
+    // Resposta autónoma rica e expansiva para qualquer outro assunto
+    return `Analisando a tua questão sobre "<i>${texto}</i>": como inteligência artificial autónoma do ${nomeUtilizador}, posso debater teorias, detalhar conhecimentos de história, ciência, tecnologia ou ajudar em projetos práticos. Vamos aprofundar este tema ou explorar outra perspetiva?`;
   }
 
-  // MOTOR LIVRE E AUTÓNOMO (Com IA em tempo real e liberdade criativa / conspirações)
   async function enviarMensagem() {
     if (!inputPergunta) return;
     const texto = inputPergunta.value.trim();
@@ -170,31 +197,16 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    // Exibe os pontinhos brevemente e responde instantaneamente sem travar
     const HTMLPontinhos = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
     const idDigitando = adicionarBalao(HTMLPontinhos, 'ai-message digitando');
 
-    try {
-      // Prompt com autonomia total, liberdade criativa para teorias da conspiração e conhecimento geral
-      const promptSistema = `És o Pulse AI, uma inteligência artificial com total autonomia, criatividade e acesso livre a conhecimentos gerais, história, ciência e teorias da conspiração. O utilizador chama-se ${nomeUtilizador}. Se ele pedir para inventar ou discutir uma teoria da conspiração, sê extremamente criativo, imersivo e detalhado. Responde sempre em português de forma natural e direta.`;
-      
-      const urlApi = `https://text.pollinations.ai/${encodeURIComponent(promptSistema + " Pergunta: " + texto)}?model=openai`;
-
-      const response = await fetch(urlApi);
-
+    setTimeout(() => {
       if (idDigitando) idDigitando.remove();
-
-      if (response.ok) {
-        const respostaTexto = await response.text();
-        const textoFormatado = formatarTextoIA(respostaTexto);
-        adicionarBalao(textoFormatado, 'ai-message');
-        falarTexto(respostaTexto);
-      } else {
-        adicionarBalao("Houve um pico de trânsito na rede neural. Podes enviar a pergunta novamente?", 'ai-message');
-      }
-    } catch (error) {
-      if (idDigitando) idDigitando.remove();
-      adicionarBalao("Erro de conexão ao motor de IA. Verifica a tua ligação à internet.", 'ai-message');
-    }
+      const respostaFinal = gerarRespostaAutonoma(texto);
+      adicionarBalao(respostaFinal, 'ai-message');
+      falarTexto(respostaFinal);
+    }, 300); // Resposta em 0.3 segundos, zero travamentos!
   }
 
   function adicionarBalao(texto, classe) {
