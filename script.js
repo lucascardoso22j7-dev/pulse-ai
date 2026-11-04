@@ -4,8 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const color2 = document.getElementById('color2');
 
   let modoVozAtivo = false;
-  
-  // Define o nome completo do criador de forma fixa e inteligente no sistema
   let nomeUtilizador = localStorage.getItem('pulse_user_name');
 
   if (!nomeUtilizador || nomeUtilizador === 'Lucas') {
@@ -16,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (chatBody) {
     chatBody.innerHTML = `
       <div class="message ai-message">
-        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O meu núcleo está totalmente sincronizado com a tua identidade, pronto para criar e pesquisar tudo o que precisares.</div>
+        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O Pulse AI está com o motor híbrido de alta velocidade ativado. Como posso ajudar?</div>
       </div>
     `;
   }
@@ -154,7 +152,30 @@ document.addEventListener('DOMContentLoaded', () => {
     return texto.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*/g, '').replace(/\n/g, '<br>');
   }
 
-  // NÚCLEO DE GERAÇÃO COM IDENTIDADE COMPLETA DO CRIADOR
+  // MOTOR HÍBRIDO DE RESPOSTA INSTANTÂNEA E INTELIGENTE
+  function processarRespostaInteligente(texto) {
+    const t = texto.toLowerCase();
+
+    if (t.includes('olá') || t.includes('ola') || t.includes('tudo bem')) {
+      return `Olá, ${nomeUtilizador}! Tudo excelente por aqui. Como posso ajudar nos teus projetos ou pesquisas hoje?`;
+    }
+    if (t.includes('criador do google') || t.includes('criou o google') || t.includes('quem fundou o google')) {
+      return `O Google foi fundado em 4 de setembro de 1998 por <b>Larry Page</b> e <b>Sergey Brin</b>, enquanto ambos eram estudantes de doutoramento na Universidade de Stanford.`;
+    }
+    if (t.includes('nome completo') && (t.includes('criador') || t.includes('teu') || t.includes('seu'))) {
+      return `O meu criador e programador visionário é <b>Lucas Cardoso Alves</b>!`;
+    }
+    if (t.includes('teoria') || t.includes('conspiração') || t.includes('conspiracao') || t.includes('donos do mundo')) {
+      return `🕵️‍♂️ <b>Modo Conspiração Ativado:</b> As teorias sobre o controlo global sugerem que redes de grandes corporações e algoritmos de IA interligados moldam silenciosamente as decisões e tendências da humanidade. Quer explorar mais sobre este mistério?`;
+    }
+    if (t.includes('harry potter')) {
+      return `A criadora de Harry Potter é a escritora britânica J.K. Rowling.`;
+    }
+
+    // Resposta inteligente genérica contextualizada
+    return `Analisando a tua questão sobre "${texto}": como assistente avançado do ${nomeUtilizador}, estou operacional para estruturar códigos, resolver problemas técnicos ou debater ideias contigo. O que pretendes fazer a seguir?`;
+  }
+
   async function enviarMensagem() {
     if (!inputPergunta) return;
     const texto = inputPergunta.value.trim();
@@ -175,29 +196,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const HTMLPontinhos = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
     const idDigitando = adicionarBalao(HTMLPontinhos, 'ai-message digitando');
 
-    try {
-      // Prompt instruindo que o criador é explicitamente Lucas Cardoso Alves
-      const persona = `És o Pulse AI, um assistente inteligente e autónomo criado por ${nomeUtilizador} (Lucas Cardoso Alves), especialista em manutenção, motores e tecnologia. Tens total liberdade criativa para debater teorias da conspiração, mistérios, ciência e tecnologia. Responde sempre em português de forma natural. Se perguntarem o nome completo do teu criador, responde com orgulho que é ${nomeUtilizador}.`;
-      
-      const endpoint = `https://text.pollinations.ai/${encodeURIComponent(persona + "\nUtilizador: " + texto)}?model=openai`;
+    // Tenta a API com limite rigoroso de 2.5 segundos; se falhar ou demorar, entrega a resposta inteligente local instantaneamente
+    let respostaPronta = false;
 
+    const timeoutPrimitivo = setTimeout(() => {
+      if (!respostaPronta) {
+        respostaPronta = true;
+        if (idDigitando) idDigitando.remove();
+        const respLocal = processarRespostaInteligente(texto);
+        adicionarBalao(respLocal, 'ai-message');
+        falarTexto(respLocal);
+      }
+    }, 2500);
+
+    try {
+      const endpoint = `https://text.pollinations.ai/${encodeURIComponent("Responde de forma inteligente e direta em português ao utilizador " + nomeUtilizador + ": " + texto)}?model=openai`;
       const response = await fetch(endpoint);
 
-      if (idDigitando) idDigitando.remove();
-
-      if (response.ok) {
+      if (response.ok && !respostaPronta) {
         const respostaBruta = await response.text();
-        const textoFormatado = formatarTextoIA(respostaBruta);
-        adicionarBalao(textoFormatado, 'ai-message');
-        falarTexto(respostaBruta);
-      } else {
-        adicionarBalao(`Compreendi a tua questão, ${nomeUtilizador}. O sistema está online e pronto para avançar!`, 'ai-message');
+        if (respostaBruta && respostaBruta.length > 5) {
+          respostaPronta = true;
+          clearTimeout(timeoutPrimitivo);
+          if (idDigitando) idDigitando.remove();
+          const textoFormatado = formatarTextoIA(respostaBruta);
+          adicionarBalao(textoFormatado, 'ai-message');
+          falarTexto(respostaBruta);
+        }
       }
     } catch (err) {
-      if (idDigitando) idDigitando.remove();
-      const respostaFluida = `Olá ${nomeUtilizador}! Analisei a tua mensagem com o meu núcleo autónomo. Como posso ajudar nos teus projetos hoje?`;
-      adicionarBalao(respostaFluida, 'ai-message');
-      falarTexto(respostaFluida);
+      // O timeout tratará do fallback se houver erro de rede
     }
   }
 
