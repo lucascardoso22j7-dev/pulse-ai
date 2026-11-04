@@ -6,7 +6,8 @@
   <title>Pulse AI</title>
   <!-- Ícone / Favicon do site -->
   <link rel="icon" type="image/png" href="logo.png">
-  <link rel="stylesheet" href="style.css?v=3.0">
+  <!-- Força o carregamento da versão atualizada do CSS -->
+  <link rel="stylesheet" href="style.css?v=3.1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -30,7 +31,7 @@
     <!-- ABA DO CHAT -->
     <div id="aba-chat" class="tab-content active">
       <div class="chat-history" id="historico">
-        <!-- Boas-vindas injetadas pelo script.js -->
+        <!-- As boas-vindas e o nome personalizado são injetados pelo script.js -->
       </div>
 
       <!-- INPUT E BARRA DE ENVIO COM VOZ -->
@@ -50,7 +51,7 @@
 
         <input type="text" id="pergunta" placeholder="Digite ou clique no microfone para falar...">
         
-        <!-- Botão do Microfone para Chat por Voz -->
+        <!-- Botão do Microfone / Chat por Voz -->
         <button id="btnVoz" class="btn-voz" title="Falar por voz"><i class="fa-solid fa-microphone"></i></button>
         
         <button id="btnPerguntar" class="btn-enviar"><i class="fa-solid fa-paper-plane"></i></button>
