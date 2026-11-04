@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (chatBody) {
     chatBody.innerHTML = `
       <div class="message ai-message">
-        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O Pulse AI está com o motor de inteligência ativa ilimitada. Pode perguntar sobre qualquer assunto!</div>
+        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O Pulse AI está com o visual moderno atualizado e pronto para responder com total agilidade. O que vamos pesquisar?</div>
       </div>
     `;
   }
@@ -147,9 +147,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // FORMATAÇÃO LIMPA E MODERNA DE TÓPICOS E PARÁGRAFOS
   function formatarTextoIA(texto) {
     if (!texto) return '';
-    return texto.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*/g, '').replace(/\n/g, '<br>');
+    return texto
+      .replace(/###\s*(.*?)/g, '<br><br><b>◆ $1</b><br>') // Transforma títulos ### em tópicos destacados
+      .replace(/##\s*(.*?)/g, '<br><br><b>■ $1</b><br>')  // Transforma títulos ## em subtópicos
+      .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')             // Negritos limpos
+      .replace(/\*/g, '•')                                // Transforma asteriscos em marcadores bonitos
+      .replace(/\n/g, '<br>');                            // Quebras de linha naturais
   }
 
   async function enviarMensagem() {
@@ -173,10 +179,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const idDigitando = adicionarBalao(HTMLPontinhos, 'ai-message digitando');
 
     try {
-      // Requisição direta sem mensagens estáticas de erro
-      const promptSistema = `Você é o Pulse AI, uma IA autônoma e completa criada por ${nomeUtilizador}. Você tem conhecimento profundo sobre ciência, engenharia, história, materiais (como madeiras, motores, elétrica), teorias e cultura geral. Responda detalhadamente e em português brasileiro.`;
+      const promptSistema = `Você é o Pulse AI, um assistente virtual de elite criado por ${nomeUtilizador} (Lucas Cardoso Alves). Responda sempre em português brasileiro de forma fluida, limpa, organizada em tópicos curtos e diretos, sem códigos markdown complexos.`;
 
-      const url = `https://text.pollinations.ai/${encodeURIComponent(promptSistema + "\nPergunta do usuário: " + texto)}`;
+      const url = `https://text.pollinations.ai/${encodeURIComponent(promptSistema + "\nPergunta: " + texto)}`;
 
       const response = await fetch(url);
       
@@ -188,11 +193,11 @@ document.addEventListener('DOMContentLoaded', () => {
         adicionarBalao(textoFormatado, 'ai-message');
         falarTexto(respostaBruta);
       } else {
-        adicionarBalao("Desculpe, instabilidade temporária na rede. Por favor, tente enviar novamente.", 'ai-message');
+        adicionarBalao("O servidor demorou a responder. Por favor, tente enviar a pergunta novamente.", 'ai-message');
       }
     } catch (err) {
       if (idDigitando) idDigitando.remove();
-      adicionarBalao("Erro de conexão com o servidor de IA. Verifique sua internet e tente novamente.", 'ai-message');
+      adicionarBalao("Erro de conexão. Verifique sua internet.", 'ai-message');
     }
   }
 
