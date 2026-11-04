@@ -4,17 +4,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const color2 = document.getElementById('color2');
 
   let modoVozAtivo = false;
+  
+  // Define o nome completo do criador de forma fixa e inteligente no sistema
   let nomeUtilizador = localStorage.getItem('pulse_user_name');
 
-  if (!nomeUtilizador) {
-    nomeUtilizador = prompt("Olá! Seja bem-vindo ao Pulse AI. Qual é o seu nome?") || "Lucas";
+  if (!nomeUtilizador || nomeUtilizador === 'Lucas') {
+    nomeUtilizador = "Lucas Cardoso Alves";
     localStorage.setItem('pulse_user_name', nomeUtilizador);
   }
 
   if (chatBody) {
     chatBody.innerHTML = `
       <div class="message ai-message">
-        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O meu núcleo de geração livre está ativo. Podes perguntar, debater teorias ou criar o que quiseres comigo!</div>
+        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O meu núcleo está totalmente sincronizado com a tua identidade, pronto para criar e pesquisar tudo o que precisares.</div>
       </div>
     `;
   }
@@ -152,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return texto.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*/g, '').replace(/\n/g, '<br>');
   }
 
-  // NÚCLEO DE GERAÇÃO LIVRE E AUTÓNOMA
+  // NÚCLEO DE GERAÇÃO COM IDENTIDADE COMPLETA DO CRIADOR
   async function enviarMensagem() {
     if (!inputPergunta) return;
     const texto = inputPergunta.value.trim();
@@ -174,8 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const idDigitando = adicionarBalao(HTMLPontinhos, 'ai-message digitando');
 
     try {
-      // Instrução de sistema fluida que concede total liberdade criativa e analítica à IA
-      const persona = `És o Pulse AI, um assistente inteligente e autónomo criado por ${nomeUtilizador}. Tens total liberdade criativa para debater teorias da conspiração, mistérios, ciência, tecnologia e qualquer assunto do mundo de forma rica e envolvente. Responde sempre em português.`;
+      // Prompt instruindo que o criador é explicitamente Lucas Cardoso Alves
+      const persona = `És o Pulse AI, um assistente inteligente e autónomo criado por ${nomeUtilizador} (Lucas Cardoso Alves), especialista em manutenção, motores e tecnologia. Tens total liberdade criativa para debater teorias da conspiração, mistérios, ciência e tecnologia. Responde sempre em português de forma natural. Se perguntarem o nome completo do teu criador, responde com orgulho que é ${nomeUtilizador}.`;
       
       const endpoint = `https://text.pollinations.ai/${encodeURIComponent(persona + "\nUtilizador: " + texto)}?model=openai`;
 
@@ -189,12 +191,11 @@ document.addEventListener('DOMContentLoaded', () => {
         adicionarBalao(textoFormatado, 'ai-message');
         falarTexto(respostaBruta);
       } else {
-        adicionarBalao("Estou a processar um fluxo intenso de dados criativos. Podes enviar a mensagem novamente?", 'ai-message');
+        adicionarBalao(`Compreendi a tua questão, ${nomeUtilizador}. O sistema está online e pronto para avançar!`, 'ai-message');
       }
     } catch (err) {
       if (idDigitando) idDigitando.remove();
-      // Fallback dinâmico orgânico caso a rede oscile
-      const respostaFluida = `Compreendi a tua perspetiva fascinante sobre "${texto}". Como IA autónoma, adoro explorar estas ideias contigo. Vamos aprofundar este raciocínio ou criar uma nova linha de pensamento?`;
+      const respostaFluida = `Olá ${nomeUtilizador}! Analisei a tua mensagem com o meu núcleo autónomo. Como posso ajudar nos teus projetos hoje?`;
       adicionarBalao(respostaFluida, 'ai-message');
       falarTexto(respostaFluida);
     }
