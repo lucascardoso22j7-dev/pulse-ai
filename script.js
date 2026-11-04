@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (chatBody) {
     chatBody.innerHTML = `
       <div class="message ai-message">
-        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O sistema de busca fotográfica precisa foi atualizado. O que deseja ver agora?</div>
+        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O Pulse AI está com o núcleo híbrido de alta velocidade e busca visual de oficina ativados. Como posso ajudar?</div>
       </div>
     `;
   }
@@ -147,6 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // FORMATAÇÃO MODERNA DE TÓPICOS E PARÁGRAFOS
   function formatarTextoIA(texto) {
     if (!texto) return '';
     return texto
@@ -157,15 +158,13 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/\n/g, '<br>');
   }
 
+  // RESPOSTA RÁPIDA LOCAL PARA GARANTIR VELOCIDADE MÁXIMA
   function gerarRespostaInstantanea(texto) {
     const t = texto.toLowerCase();
-    if (t.includes('titan') || t.includes('moto') || t.includes('honda')) {
-      return `<b>◆ Honda CG Titan:</b><br><br>• É uma das motos mais populares do Brasil, conhecida pela sua extrema durabilidade e economia de combustível na oficina e no dia a dia.`;
-    }
     if (t.includes('olá') || t.includes('ola')) {
       return `Olá, ${nomeUtilizador}! Tudo em ordem por aqui. Em que posso ajudar nos seus projetos hoje?`;
     }
-    return `Analisando a sua questão sobre "${texto}": como assistente avançado do ${nomeUtilizador}, estou operacional para estruturar informações técnicas.`;
+    return `Analisando a sua questão sobre "${texto}": como assistente avançado do ${nomeUtilizador}, estou operacional para estruturar informações técnicas com máxima eficiência.`;
   }
 
   async function enviarMensagem() {
@@ -185,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // SISTEMA DE FILTRAGEM INTELIGENTE DE FOTOS
+    // SISTEMA DE BUSCA DE FOTOGRAFIAS REAIS COM PRECISÃO DE OFICINA
     const tLower = texto.toLowerCase();
     if (tLower.includes('foto') || tLower.includes('imagem') || tLower.includes('mostre') || tLower.includes('mande uma') || tLower.includes('ver')) {
       const HTMLPontinhosImg = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
@@ -194,23 +193,23 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         if (idDigImg) idDigImg.remove();
         
-        // Limpa o texto para isolar o objeto exato (ex: "honda cg titan 160", "multimetro", etc.)
         let termoBusca = texto.replace(/foto|imagem|de|uma|um|mostre|mande|ver|gostaria|quero/gi, '').trim();
-        if (!termoBusca) termoBusca = 'motorcycle';
+        if (!termoBusca) termoBusca = 'tools';
         
-        // Mapeamento inteligente para garantir termos em inglês otimizados para galerias globais de fotos reais
         let termoFinal = termoBusca;
-        if (termoBusca.includes('titan') || termoBusca.includes('moto') || termoBusca.includes('cg')) {
-          termoFinal = 'motorcycle street bike';
+        if (termoBusca.includes('martelete') || termoBusca.includes('bosch') || termoBusca.includes('furadeira')) {
+          termoFinal = 'rotary hammer drill heavy tool power tool';
         } else if (termoBusca.includes('multimetro') || termoBusca.includes('multímetro')) {
-          termoFinal = 'multimeter electronics tool';
+          termoFinal = 'digital multimeter electronics tool';
+        } else if (termoBusca.includes('titan') || termoBusca.includes('moto') || termoBusca.includes('cg')) {
+          termoFinal = 'honda motorcycle street bike';
         } else if (termoBusca.includes('ferrari')) {
           termoFinal = 'ferrari spider red sports car';
         }
 
         const urlFotoReal = `https://source.unsplash.com/featured/600x400/?${encodeURIComponent(termoFinal)}`;
         
-        const htmlComFotoReal = `Aqui está a fotografia correspondente a <b>"${termoBusca}"</b>:<br><img src="${urlFotoReal}" style="width:100%; border-radius:8px; margin-top:8px; background:#111;" alt="Fotografia Real" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=600&h=400';">`;
+        const htmlComFotoReal = `Aqui está a fotografia correspondente a <b>"${termoBusca}"</b>:<br><img src="${urlFotoReal}" style="width:100%; border-radius:8px; margin-top:8px; background:#111;" alt="Fotografia Real" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1504148455328-c376907d081c?w=600&h=400';">`;
         
         adicionarBalao(htmlComFotoReal, 'ai-message');
         falarTexto("Aqui está a fotografia solicitada.");
@@ -223,6 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let respostaEntregue = false;
 
+    // TIMEOUT DE SEGURANÇA (Garante resposta em até 3 segundos)
     const timerRapido = setTimeout(() => {
       if (!respostaEntregue) {
         respostaEntregue = true;
