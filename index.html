@@ -6,8 +6,7 @@
   <title>Pulse AI</title>
   <!-- Ícone / Favicon do site -->
   <link rel="icon" type="image/png" href="logo.png">
-  <!-- Força o carregamento do CSS sem cache -->
-  <link rel="stylesheet" href="style.css?v=2.5">
+  <link rel="stylesheet" href="style.css?v=3.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -31,28 +30,29 @@
     <!-- ABA DO CHAT -->
     <div id="aba-chat" class="tab-content active">
       <div class="chat-history" id="historico">
-        <div class="message ai-message">
-          <div class="bubble">Olá, Lucas! O <b>Pulse AI</b> está pronto. Podes aceder às ferramentas no menu + ou ir diretamente para o estúdio de memes para criar edições virais!</div>
-        </div>
+        <!-- Boas-vindas injetadas pelo script.js -->
       </div>
 
-      <!-- INPUT E BARRA DE ENVIO -->
+      <!-- INPUT E BARRA DE ENVIO COM VOZ -->
       <div class="chat-input-area">
         <button id="btnMais" class="btn-mais"><i class="fa-solid fa-plus"></i></button>
         
-        <!-- Menu Flutuante de Anexos / Ferramentas -->
+        <!-- Menu Flutuante de Anexos -->
         <div id="menuAnexo" class="menu-anexo">
-          <button id="btnMenuOrcamento"><i class="fa-solid fa-file-invoice-dollar"></i> Orçamento de Funilaria</button>
           <button id="btnMenuCortes"><i class="fa-solid fa-video"></i> Gerador de Cortes</button>
           <button id="btnMenuImagem"><i class="fa-solid fa-image"></i> Gerar Imagem</button>
           <label for="uploadEditarImagem" class="menu-item-label">
-            <i class="fa-solid fa-wand-magic-sparkles"></i> Editar Foto (Careca/Filtro)
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Editar Foto (Filtro/Efeito)
           </label>
           <input type="file" id="uploadEditarImagem" accept="image/*" style="display: none;">
           <button id="btnMenuMemes"><i class="fa-solid fa-clapperboard"></i> Estúdio de Memes</button>
         </div>
 
-        <input type="text" id="pergunta" placeholder="Converse com a IA, peça cores ou clique no +...">
+        <input type="text" id="pergunta" placeholder="Digite ou clique no microfone para falar...">
+        
+        <!-- Botão do Microfone para Chat por Voz -->
+        <button id="btnVoz" class="btn-voz" title="Falar por voz"><i class="fa-solid fa-microphone"></i></button>
+        
         <button id="btnPerguntar" class="btn-enviar"><i class="fa-solid fa-paper-plane"></i></button>
       </div>
     </div>
