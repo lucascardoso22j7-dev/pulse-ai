@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (chatBody) {
     chatBody.innerHTML = `
       <div class="message ai-message">
-        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O Pulse AI está com o motor híbrido de alta velocidade ativado. Como posso ajudar?</div>
+        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O Pulse AI está com o motor de inteligência ativa ilimitada. Pode perguntar sobre qualquer assunto!</div>
       </div>
     `;
   }
@@ -152,30 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return texto.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*/g, '').replace(/\n/g, '<br>');
   }
 
-  // MOTOR HÍBRIDO DE RESPOSTA INSTANTÂNEA E INTELIGENTE
-  function processarRespostaInteligente(texto) {
-    const t = texto.toLowerCase();
-
-    if (t.includes('olá') || t.includes('ola') || t.includes('tudo bem')) {
-      return `Olá, ${nomeUtilizador}! Tudo excelente por aqui. Como posso ajudar nos teus projetos ou pesquisas hoje?`;
-    }
-    if (t.includes('criador do google') || t.includes('criou o google') || t.includes('quem fundou o google')) {
-      return `O Google foi fundado em 4 de setembro de 1998 por <b>Larry Page</b> e <b>Sergey Brin</b>, enquanto ambos eram estudantes de doutoramento na Universidade de Stanford.`;
-    }
-    if (t.includes('nome completo') && (t.includes('criador') || t.includes('teu') || t.includes('seu'))) {
-      return `O meu criador e programador visionário é <b>Lucas Cardoso Alves</b>!`;
-    }
-    if (t.includes('teoria') || t.includes('conspiração') || t.includes('conspiracao') || t.includes('donos do mundo')) {
-      return `🕵️‍♂️ <b>Modo Conspiração Ativado:</b> As teorias sobre o controlo global sugerem que redes de grandes corporações e algoritmos de IA interligados moldam silenciosamente as decisões e tendências da humanidade. Quer explorar mais sobre este mistério?`;
-    }
-    if (t.includes('harry potter')) {
-      return `A criadora de Harry Potter é a escritora britânica J.K. Rowling.`;
-    }
-
-    // Resposta inteligente genérica contextualizada
-    return `Analisando a tua questão sobre "${texto}": como assistente avançado do ${nomeUtilizador}, estou operacional para estruturar códigos, resolver problemas técnicos ou debater ideias contigo. O que pretendes fazer a seguir?`;
-  }
-
   async function enviarMensagem() {
     if (!inputPergunta) return;
     const texto = inputPergunta.value.trim();
@@ -196,36 +172,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const HTMLPontinhos = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
     const idDigitando = adicionarBalao(HTMLPontinhos, 'ai-message digitando');
 
-    // Tenta a API com limite rigoroso de 2.5 segundos; se falhar ou demorar, entrega a resposta inteligente local instantaneamente
-    let respostaPronta = false;
-
-    const timeoutPrimitivo = setTimeout(() => {
-      if (!respostaPronta) {
-        respostaPronta = true;
-        if (idDigitando) idDigitando.remove();
-        const respLocal = processarRespostaInteligente(texto);
-        adicionarBalao(respLocal, 'ai-message');
-        falarTexto(respLocal);
-      }
-    }, 2500);
-
     try {
-      const endpoint = `https://text.pollinations.ai/${encodeURIComponent("Responde de forma inteligente e direta em português ao utilizador " + nomeUtilizador + ": " + texto)}?model=openai`;
-      const response = await fetch(endpoint);
+      // Requisição direta sem mensagens estáticas de erro
+      const promptSistema = `Você é o Pulse AI, uma IA autônoma e completa criada por ${nomeUtilizador}. Você tem conhecimento profundo sobre ciência, engenharia, história, materiais (como madeiras, motores, elétrica), teorias e cultura geral. Responda detalhadamente e em português brasileiro.`;
 
-      if (response.ok && !respostaPronta) {
+      const url = `https://text.pollinations.ai/${encodeURIComponent(promptSistema + "\nPergunta do usuário: " + texto)}`;
+
+      const response = await fetch(url);
+      
+      if (idDigitando) idDigitando.remove();
+
+      if (response.ok) {
         const respostaBruta = await response.text();
-        if (respostaBruta && respostaBruta.length > 5) {
-          respostaPronta = true;
-          clearTimeout(timeoutPrimitivo);
-          if (idDigitando) idDigitando.remove();
-          const textoFormatado = formatarTextoIA(respostaBruta);
-          adicionarBalao(textoFormatado, 'ai-message');
-          falarTexto(respostaBruta);
-        }
+        const textoFormatado = formatarTextoIA(respostaBruta);
+        adicionarBalao(textoFormatado, 'ai-message');
+        falarTexto(respostaBruta);
+      } else {
+        adicionarBalao("Desculpe, instabilidade temporária na rede. Por favor, tente enviar novamente.", 'ai-message');
       }
     } catch (err) {
-      // O timeout tratará do fallback se houver erro de rede
+      if (idDigitando) idDigitando.remove();
+      adicionarBalao("Erro de conexão com o servidor de IA. Verifique sua internet e tente novamente.", 'ai-message');
     }
   }
 
