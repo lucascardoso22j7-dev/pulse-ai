@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (chatBody) {
     chatBody.innerHTML = `
       <div class="message ai-message">
-        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O motor de busca de fotografias reais está ativo. O que deseja ver hoje?</div>
+        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O sistema de busca fotográfica precisa foi atualizado. O que deseja ver agora?</div>
       </div>
     `;
   }
@@ -157,16 +157,15 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/\n/g, '<br>');
   }
 
-  // MOTOR LOCAL DE RESPOSTAS RÁPIDAS
   function gerarRespostaInstantanea(texto) {
     const t = texto.toLowerCase();
-    if (t.includes('multímetro') || t.includes('multimetro') || t.includes('capacitor')) {
-      return `<b>◆ Guia Profissional para Multímetro em Capacitores:</b><br><br>• <b>Escala de Capacitância:</b> Utilize a função marcada com <b>μF</b> ou <b>nF</b>.<br>• <b>Procedimento:</b> Descarregue o componente antes do teste para evitar danos ao aparelho e posicione as pontas nos terminais.`;
+    if (t.includes('titan') || t.includes('moto') || t.includes('honda')) {
+      return `<b>◆ Honda CG Titan:</b><br><br>• É uma das motos mais populares do Brasil, conhecida pela sua extrema durabilidade e economia de combustível na oficina e no dia a dia.`;
     }
     if (t.includes('olá') || t.includes('ola')) {
       return `Olá, ${nomeUtilizador}! Tudo em ordem por aqui. Em que posso ajudar nos seus projetos hoje?`;
     }
-    return `Analisando a sua questão sobre "${texto}": como assistente avançado do ${nomeUtilizador}, estou operando para estruturar informações técnicas com máxima eficiência.`;
+    return `Analisando a sua questão sobre "${texto}": como assistente avançado do ${nomeUtilizador}, estou operacional para estruturar informações técnicas.`;
   }
 
   async function enviarMensagem() {
@@ -186,25 +185,35 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // SE O USUÁRIO PEDIR UMA FOTO / IMAGEM (BUSCA FOTO REAL DA WEB)
+    // SISTEMA DE FILTRAGEM INTELIGENTE DE FOTOS
     const tLower = texto.toLowerCase();
-    if (tLower.includes('foto') || tLower.includes('imagem') || tLower.includes('mostre') || tLower.includes('mande uma')) {
+    if (tLower.includes('foto') || tLower.includes('imagem') || tLower.includes('mostre') || tLower.includes('mande uma') || tLower.includes('ver')) {
       const HTMLPontinhosImg = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
       const idDigImg = adicionarBalao(HTMLPontinhosImg, 'ai-message digitando');
 
       setTimeout(() => {
         if (idDigImg) idDigImg.remove();
         
-        // Extrai termos-chave para buscar uma foto real de alta qualidade no Unsplash Source
-        let termoBusca = texto.replace(/foto|imagem|de|uma|um|mostre|mande/gi, '').trim();
-        if (!termoBusca) termoBusca = 'car';
+        // Limpa o texto para isolar o objeto exato (ex: "honda cg titan 160", "multimetro", etc.)
+        let termoBusca = texto.replace(/foto|imagem|de|uma|um|mostre|mande|ver|gostaria|quero/gi, '').trim();
+        if (!termoBusca) termoBusca = 'motorcycle';
         
-        const urlFotoReal = `https://source.unsplash.com/featured/600x400/?${encodeURIComponent(termoBusca)}`;
+        // Mapeamento inteligente para garantir termos em inglês otimizados para galerias globais de fotos reais
+        let termoFinal = termoBusca;
+        if (termoBusca.includes('titan') || termoBusca.includes('moto') || termoBusca.includes('cg')) {
+          termoFinal = 'motorcycle street bike';
+        } else if (termoBusca.includes('multimetro') || termoBusca.includes('multímetro')) {
+          termoFinal = 'multimeter electronics tool';
+        } else if (termoBusca.includes('ferrari')) {
+          termoFinal = 'ferrari spider red sports car';
+        }
+
+        const urlFotoReal = `https://source.unsplash.com/featured/600x400/?${encodeURIComponent(termoFinal)}`;
         
-        const htmlComFotoReal = `Aqui está uma fotografia real encontrada para <b>"${termoBusca}"</b>:<br><img src="${urlFotoReal}" style="width:100%; border-radius:8px; margin-top:8px; background:#111;" alt="Fotografia Real" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&h=400';">`;
+        const htmlComFotoReal = `Aqui está a fotografia correspondente a <b>"${termoBusca}"</b>:<br><img src="${urlFotoReal}" style="width:100%; border-radius:8px; margin-top:8px; background:#111;" alt="Fotografia Real" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=600&h=400';">`;
         
         adicionarBalao(htmlComFotoReal, 'ai-message');
-        falarTexto("Aqui está a fotografia real solicitada.");
+        falarTexto("Aqui está a fotografia solicitada.");
       }, 1000);
       return;
     }
@@ -242,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     } catch (err) {
-      // O timeout de segurança já lida caso ocorra falha de rede
+      // O timeout de segurança já gerencia falhas
     }
   }
 
