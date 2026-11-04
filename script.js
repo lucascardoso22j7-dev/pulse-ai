@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (chatBody) {
     chatBody.innerHTML = `
       <div class="message ai-message">
-        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O motor de alta velocidade e o gerador de imagens estão ativos. O que vamos ver ou criar hoje?</div>
+        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O motor de busca de fotografias reais está ativo. O que deseja ver hoje?</div>
       </div>
     `;
   }
@@ -157,16 +157,16 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/\n/g, '<br>');
   }
 
-  // MOTOR DE RESPOSTA RÁPIDA LOCAL (Caso a IA externe demore mais de 3.5 segundos)
+  // MOTOR LOCAL DE RESPOSTAS RÁPIDAS
   function gerarRespostaInstantanea(texto) {
     const t = texto.toLowerCase();
     if (t.includes('multímetro') || t.includes('multimetro') || t.includes('capacitor')) {
-      return `<b>◆ Guia Rápido para Multímetro em Capacitores:</b><br><br>• <b>Função Capacitância:</b> Escolha um multímetro digital que possua a escala marcada com o símbolo <b>μF</b> ou <b>nF</b>.<br>• <b>Como testar:</b> Descarregue o capacitor por segurança, coloque o seletor na escala adequada e conecte as pontas de prova nos terminais.<br>• <b>Modelos recomendados:</b> Multímetros digitais automáticos como o <i>Aneng SZ01</i> ou <i>Fluke 101</i> são excelentes para bancadas e oficinas.`;
+      return `<b>◆ Guia Profissional para Multímetro em Capacitores:</b><br><br>• <b>Escala de Capacitância:</b> Utilize a função marcada com <b>μF</b> ou <b>nF</b>.<br>• <b>Procedimento:</b> Descarregue o componente antes do teste para evitar danos ao aparelho e posicione as pontas nos terminais.`;
     }
     if (t.includes('olá') || t.includes('ola')) {
       return `Olá, ${nomeUtilizador}! Tudo em ordem por aqui. Em que posso ajudar nos seus projetos hoje?`;
     }
-    return `Analisando a sua questão sobre "${texto}": como assistente avançado do ${nomeUtilizador}, estou operando em alta velocidade para estruturar informações técnicas e projetos práticos. Como deseja prosseguir?`;
+    return `Analisando a sua questão sobre "${texto}": como assistente avançado do ${nomeUtilizador}, estou operando para estruturar informações técnicas com máxima eficiência.`;
   }
 
   async function enviarMensagem() {
@@ -186,20 +186,26 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // VERIFICA SE O USUÁRIO PEDIU UMA FOTO / IMAGEM
+    // SE O USUÁRIO PEDIR UMA FOTO / IMAGEM (BUSCA FOTO REAL DA WEB)
     const tLower = texto.toLowerCase();
-    if (tLower.includes('foto') || tLower.includes('imagem') || t.includes('mostre') || t.includes('mande uma')) {
+    if (tLower.includes('foto') || tLower.includes('imagem') || tLower.includes('mostre') || tLower.includes('mande uma')) {
       const HTMLPontinhosImg = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
       const idDigImg = adicionarBalao(HTMLPontinhosImg, 'ai-message digitando');
 
       setTimeout(() => {
         if (idDigImg) idDigImg.remove();
-        // Gera a imagem usando a API gratuita de imagens do Pollinations baseada no texto do usuário
-        const urlImagemGerada = `https://image.pollinations.ai/prompt/${encodeURIComponent(texto)}?width=600&height=350&nologo=true`;
-        const htmlComFoto = `Aqui está a imagem solicitada:<br><img src="${urlImagemGerada}" style="width:100%; border-radius:8px; margin-top:8px; background:#000;" alt="Imagem Gerada">`;
-        adicionarBalao(htmlComFoto, 'ai-message');
-        falarTexto("Aqui está a imagem que você pediu.");
-      }, 1500); // Responde em 1.5 segundos com a imagem gerada
+        
+        // Extrai termos-chave para buscar uma foto real de alta qualidade no Unsplash Source
+        let termoBusca = texto.replace(/foto|imagem|de|uma|um|mostre|mande/gi, '').trim();
+        if (!termoBusca) termoBusca = 'car';
+        
+        const urlFotoReal = `https://source.unsplash.com/featured/600x400/?${encodeURIComponent(termoBusca)}`;
+        
+        const htmlComFotoReal = `Aqui está uma fotografia real encontrada para <b>"${termoBusca}"</b>:<br><img src="${urlFotoReal}" style="width:100%; border-radius:8px; margin-top:8px; background:#111;" alt="Fotografia Real" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&h=400';">`;
+        
+        adicionarBalao(htmlComFotoReal, 'ai-message');
+        falarTexto("Aqui está a fotografia real solicitada.");
+      }, 1000);
       return;
     }
 
@@ -208,7 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let respostaEntregue = false;
 
-    // TIMEOUT DE 3.5 SEGUNDOS (Garante resposta ultrarrápida sem travamentos)
     const timerRapido = setTimeout(() => {
       if (!respostaEntregue) {
         respostaEntregue = true;
@@ -217,10 +222,10 @@ document.addEventListener('DOMContentLoaded', () => {
         adicionarBalao(respLocal, 'ai-message');
         falarTexto(respLocal);
       }
-    }, 3500);
+    }, 3000);
 
     try {
-      const promptSistema = `Você é o Pulse AI, um assistente virtual veloz criado por ${nomeUtilizador} (Lucas Cardoso Alves). Responda em português brasileiro de forma direta, organizada em tópicos curtos.`;
+      const promptSistema = `Você é o Pulse AI, um assistente virtual veloz criado por ${nomeUtilizador} (Lucas Cardoso Alves). Responda em português brasileiro de forma direta e organizada em tópicos.`;
       const url = `https://text.pollinations.ai/${encodeURIComponent(promptSistema + "\nPergunta: " + texto)}`;
 
       const response = await fetch(url);
@@ -237,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     } catch (err) {
-      // O timeout de segurança já lida com o erro se falhar
+      // O timeout de segurança já lida caso ocorra falha de rede
     }
   }
 
