@@ -3,18 +3,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const color1 = document.getElementById('color1');
   const color2 = document.getElementById('color2');
 
-  // SISTEMA DE NOME PERSONALIZADO
   let nomeUtilizador = localStorage.getItem('pulse_user_name');
 
   if (!nomeUtilizador) {
-    nomeUtilizador = prompt("Olá! Seja bem-vindo ao Pulse AI. Qual é o seu nome?") || "Visitante";
+    nomeUtilizador = prompt("Olá! Seja bem-vindo ao Pulse AI. Qual é o seu nome?") || "Lucas";
     localStorage.setItem('pulse_user_name', nomeUtilizador);
   }
 
   if (chatBody) {
     chatBody.innerHTML = `
       <div class="message ai-message">
-        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O <b>Pulse AI</b> está pronto. Podes digitar ou usar o microfone para falar comigo por voz!</div>
+        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O <b>Pulse AI</b> está pronto. Podes falar comigo pelo microfone e eu respondo-te por voz!</div>
       </div>
     `;
   }
@@ -34,16 +33,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const t = texto.toLowerCase();
     if (t.includes('verde') && t.includes('roxo')) {
       aplicarDegradeChat('#00b09b', '#8e2de2');
-      return "Pronto! Degradê <b>Verde e Roxo</b> aplicado no fundo do chat!";
+      return "Pronto! Degradê Verde e Roxo aplicado!";
     }
     if (t.includes('azul') && t.includes('rosa')) {
       aplicarDegradeChat('#0072ff', '#ec4899');
-      return "Degradê <b>Azul e Rosa</b> ativado!";
+      return "Degradê Azul e Rosa ativado!";
     }
     return null;
   }
 
-  // BOTÃO (+) E MENU FLUTUANTE
+  // FUNÇÃO PARA A IA FALAR EM VOZ ALTA (SÍNTESE DE VOZ)
+  function falarTexto(texto) {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel(); // Para fala anterior se houver
+      const textoLimpo = texto.replace(/<[^>]*>?/gm, ''); // Remove tags HTML
+      const utterance = new SpeechSynthesisUtterance(textoLimpo);
+      utterance.lang = 'pt-BR';
+      utterance.rate = 1.0;
+      window.speechSynthesis.speak(utterance);
+    }
+  }
+
+  // BOTÃO (+) E MENU
   const btnMais = document.getElementById('btnMais');
   const menuAnexo = document.getElementById('menuAnexo');
 
@@ -76,16 +87,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // RECONHECIMENTO DE VOZ (CHAT POR VOZ)
+  // CHAT POR VOZ (Ouvir)
   const btnVoz = document.getElementById('btnVoz');
   const inputPergunta = document.getElementById('pergunta');
-
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
   if (SpeechRecognition && btnVoz) {
     const recognition = new SpeechRecognition();
     recognition.lang = 'pt-BR';
-    recognition.continuous = false;
 
     btnVoz.addEventListener('click', () => {
       try {
@@ -104,18 +113,11 @@ document.addEventListener('DOMContentLoaded', () => {
       enviarMensagem();
     };
 
-    recognition.onerror = () => {
-      btnVoz.classList.remove('ouvindo');
-    };
-
-    recognition.onend = () => {
-      btnVoz.classList.remove('ouvindo');
-    };
-  } else if (btnVoz) {
-    btnVoz.style.display = 'none'; // Oculta se o navegador não suportar voz
+    recognition.onerror = () => btnVoz.classList.remove('ouvindo');
+    recognition.onend = () => btnVoz.classList.remove('ouvindo');
   }
 
-  // CHAT HÍBRIDO (APIS E MOTOR RÁPIDO)
+  // ENVIO DE MENSAGENS E PROCESSAMENTO DE IA
   const btnPerguntar = document.getElementById('btnPerguntar');
   const btnLimpar = document.getElementById('btnLimpar');
 
@@ -156,23 +158,23 @@ document.addEventListener('DOMContentLoaded', () => {
     adicionarBalao(texto, 'user-message');
     inputPergunta.value = '';
 
-    // Comandos locais de cores
     const respCor = aplicarCoresPorTexto(texto);
     if (respCor) {
-      setTimeout(() => adicionarBalao(respCor, 'ai-message'), 100);
+      setTimeout(() => {
+        adicionarBalao(respCor, 'ai-message');
+        falarTexto(respCor);
+      }, 100);
       return;
     }
 
-    // Indicador de 3 pontinhos vermelhos a saltar
     const HTMLPontinhos = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
     const idDigitando = adicionarBalao(HTMLPontinhos, 'ai-message digitando');
 
-    // Sistema Híbrido: tenta IA Externa em tempo real e alterna se demorar
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const timeoutId = setTimeout(() => controller.abort(), 4500);
 
-      const promptSistema = encodeURIComponent(`És o Pulse AI, assistente inteligente de ${nomeUtilizador}. Responde rápido e direto em português, sem asteriscos.`);
+      const promptSistema = encodeURIComponent(`És o Pulse AI, assistente inteligente de ${nomeUtilizador}. Responde de forma curta, direta e amigável em português sem usar asteriscos.`);
       const promptUsuario = encodeURIComponent(texto);
       
       const response = await fetch(`https://text.pollinations.ai/${promptSistema}%20${promptUsuario}?model=openai`, {
@@ -180,18 +182,23 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       
       clearTimeout(timeoutId);
-
       if (idDigitando) idDigitando.remove();
 
       if (response.ok) {
         const respostaTexto = await response.text();
-        adicionarBalao(formatarTextoIA(respostaTexto), 'ai-message');
+        const textoFormatado = formatarTextoIA(respostaTexto);
+        adicionarBalao(textoFormatado, 'ai-message');
+        falarTexto(respostaTexto); // Fala a resposta em voz alta!
       } else {
-        adicionarBalao(`Entendi a tua pergunta, ${nomeUtilizador}! Como posso ajudar a aprofundar esse assunto?`, 'ai-message');
+        const msgPadrao = `Entendi, ${nomeUtilizador}. Como posso ajudar mais?`;
+        adicionarBalao(msgPadrao, 'ai-message');
+        falarTexto(msgPadrao);
       }
     } catch (error) {
       if (idDigitando) idDigitando.remove();
-      adicionarBalao(`Olá ${nomeUtilizador}! Módulo inteligente ativo. Como posso ajudar no teu projeto hoje?`, 'ai-message');
+      const msgErro = `Olá ${nomeUtilizador}! Módulo de voz pronto. Como posso ajudar?`;
+      adicionarBalao(msgErro, 'ai-message');
+      falarTexto(msgErro);
     }
   }
 
