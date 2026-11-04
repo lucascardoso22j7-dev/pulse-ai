@@ -2,7 +2,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 body {
@@ -39,8 +39,9 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-weight: bold;
+  font-weight: 600;
   font-size: 18px;
+  letter-spacing: -0.3px;
 }
 
 .header-controls {
@@ -71,6 +72,7 @@ body {
   border-radius: 6px;
   font-size: 13px;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
 .btn-limpar:hover {
@@ -78,7 +80,7 @@ body {
   color: #fff;
 }
 
-/* SISTEMA DE ABAS - IMPORTANTE */
+/* SISTEMA DE ABAS */
 .tab-content {
   display: none !important;
   flex: 1;
@@ -92,11 +94,11 @@ body {
 
 .chat-history {
   flex: 1;
-  padding: 20px;
+  padding: 24px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   background: #0d0d0d;
   transition: background 0.3s ease;
 }
@@ -114,26 +116,41 @@ body {
   justify-content: flex-start;
 }
 
+/* TIPOGRAFIA MODERNIZADA DOS BALÕES */
 .bubble {
-  max-width: 75%;
-  padding: 12px 16px;
+  max-width: 80%;
+  padding: 14px 18px;
   border-radius: 14px;
-  font-size: 15px;
-  line-height: 1.5;
+  font-size: 14.5px;
+  line-height: 1.6;
   word-wrap: break-word;
+  letter-spacing: -0.2px;
 }
 
 .user-message .bubble {
   background: #ff003c;
   color: #fff;
-  border-bottom-right-radius: 2px;
+  border-bottom-right-radius: 4px;
+  font-weight: 400;
 }
 
 .ai-message .bubble {
-  background: #1a1a1a;
-  color: #e0e0e0;
-  border-bottom-left-radius: 2px;
+  background: #171717;
+  color: #eaeaea;
+  border-bottom-left-radius: 4px;
   border: 1px solid #262626;
+}
+
+/* ESTILIZAÇÃO MODERNA PARA TÓPICOS E PARÁGRAFOS DA IA */
+.ai-message .bubble b {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.ai-message .bubble br {
+  display: block;
+  content: "";
+  margin-top: 6px;
 }
 
 .chat-input-area {
@@ -158,6 +175,7 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 16px;
+  transition: background 0.2s;
 }
 
 .btn-mais:hover {
@@ -209,7 +227,7 @@ body {
   border-radius: 24px;
   color: #fff;
   outline: none;
-  font-size: 15px;
+  font-size: 14.5px;
 }
 
 .btn-voz {
@@ -248,6 +266,11 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 15px;
+  transition: transform 0.1s;
+}
+
+.btn-enviar:active {
+  transform: scale(0.92);
 }
 
 /* ESTÚDIO DE MEMES */
@@ -262,6 +285,7 @@ body {
 
 .memes-header h2 {
   font-size: 18px;
+  font-weight: 600;
 }
 
 .btn-voltar {
@@ -339,9 +363,9 @@ body {
   font-weight: bold;
 }
 
-/* PONTINHOS */
+/* ANIMAÇÃO DE DIGITAÇÃO (PONTINHOS) */
 .message.ai-message.digitando .bubble {
-  background-color: #1a1a1a;
+  background-color: #171717;
   border-radius: 14px;
   padding: 12px 16px;
   display: inline-block;
@@ -357,8 +381,8 @@ body {
 }
 
 .typing-dots span {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   background-color: #ff003c;
   border-radius: 50%;
   display: inline-block;
@@ -371,5 +395,5 @@ body {
 
 @keyframes bounce {
   0%, 80%, 100% { transform: translateY(0); opacity: 0.3; }
-  40% { transform: translateY(-7px); opacity: 1; }
+  40% { transform: translateY(-6px); opacity: 1; }
 }
