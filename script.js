@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (chatBody) {
     chatBody.innerHTML = `
       <div class="message ai-message">
-        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O motor de alta velocidade Groq (Llama 3) está online. O que vamos pesquisar ou criar hoje?</div>
+        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O motor quântico do Pulse AI está 100% online e conectado. O que vamos pesquisar ou criar hoje?</div>
       </div>
     `;
   }
@@ -212,44 +212,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const idDigitando = adicionarBalao(HTMLPontinhos, 'ai-message digitando');
 
     try {
-      const GROQ_API_KEY = "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"; 
+      // Endpoint otimizado e direto que aceita requisições do navegador sem barreiras CORS
+      const url = `https://text.pollinations.ai/prompt/${encodeURIComponent("Responde em português do Brasil de forma detalhada e organizada em tópicos para " + nomeUtilizador + ": " + texto)}`;
 
-      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${GROQ_API_KEY}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          model: "llama3-70b-8192",
-          messages: [
-            {
-              role: "system",
-              content: `Você é o Pulse AI, um assistente virtual veloz, inteligente e autónomo criado por ${nomeUtilizador} (Lucas Cardoso Alves). Responda sempre em português brasileiro de forma detalhada, clara e organizada em tópicos quando necessário.`
-            },
-            {
-              role: "user",
-              content: texto
-            }
-          ],
-          temperature: 0.7
-        })
-      });
+      const response = await fetch(url);
 
       if (idDigitando) idDigitando.remove();
 
       if (response.ok) {
-        const data = await response.json();
-        const respostaBruta = data.choices[0].message.content;
+        const respostaBruta = await response.text();
         const textoFormatado = formatarTextoIA(respostaBruta);
         adicionarBalao(textoFormatado, 'ai-message');
         falarTexto(respostaBruta);
       } else {
-        adicionarBalao("Erro na API da Groq. Verifique a ligação.", 'ai-message');
+        adicionarBalao("Erro temporário no servidor de IA. Tente enviar novamente.", 'ai-message');
       }
     } catch (err) {
       if (idDigitando) idDigitando.remove();
-      adicionarBalao("Erro de conexão ao contactar o servidor da Groq.", 'ai-message');
+      adicionarBalao("Erro de conexão. Verifique sua rede e tente novamente.", 'ai-message');
     }
   }
 
