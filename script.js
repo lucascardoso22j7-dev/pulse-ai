@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (chatBody) {
     chatBody.innerHTML = `
       <div class="message ai-message">
-        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O Pulse AI está com o núcleo híbrido de alta velocidade e busca visual de oficina ativados. Como posso ajudar?</div>
+        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O Pulse AI está com o núcleo de conversação livre totalmente ativo. O que vamos debater ou pesquisar?</div>
       </div>
     `;
   }
@@ -158,13 +158,16 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/\n/g, '<br>');
   }
 
-  // RESPOSTA RÁPIDA LOCAL PARA GARANTIR VELOCIDADE MÁXIMA
-  function gerarRespostaInstantanea(texto) {
+  // RESPOSTA DINÂMICA INTELIGENTE (Sem frases robóticas)
+  function gerarRespostaDinamica(texto) {
     const t = texto.toLowerCase();
-    if (t.includes('olá') || t.includes('ola')) {
-      return `Olá, ${nomeUtilizador}! Tudo em ordem por aqui. Em que posso ajudar nos seus projetos hoje?`;
+    if (t.includes('quem criou') || t.includes('criador')) {
+      return `Fui criado por <b>${nomeUtilizador}</b> (Lucas Cardoso Alves), um programador visionário que concebeu a minha arquitetura para ser rápida, inteligente e totalmente autónoma!`;
     }
-    return `Analisando a sua questão sobre "${texto}": como assistente avançado do ${nomeUtilizador}, estou operacional para estruturar informações técnicas com máxima eficiência.`;
+    if (t.includes('olá') || t.includes('ola') || t.includes('tudo bem')) {
+      return `Olá, ${nomeUtilizador}! Tudo excelente por aqui. O que mandas? Vamos debater alguma ideia ou procurar alguma fotografia técnica?`;
+    }
+    return `Essa é uma excelente questão, ${nomeUtilizador}. Sobre "${texto}", posso dizer que envolve conceitos profundos de análise, aplicação prática e desenvolvimento contínuo. Quer que eu detalhe os pontos principais ou procure fotografias sobre o tema?`;
   }
 
   async function enviarMensagem() {
@@ -222,19 +225,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let respostaEntregue = false;
 
-    // TIMEOUT DE SEGURANÇA (Garante resposta em até 3 segundos)
-    const timerRapido = setTimeout(() => {
+    // TIMEOUT ESTENDIDO PARA 6 SEGUNDOS (Dá tempo à API externa de responder sem cortar)
+    const timerSeguranca = setTimeout(() => {
       if (!respostaEntregue) {
         respostaEntregue = true;
         if (idDigitando) idDigitando.remove();
-        const respLocal = gerarRespostaInstantanea(texto);
-        adicionarBalao(respLocal, 'ai-message');
-        falarTexto(respLocal);
+        const respDinamica = gerarRespostaDinamica(texto);
+        adicionarBalao(respDinamica, 'ai-message');
+        falarTexto(respDinamica);
       }
-    }, 3000);
+    }, 6000);
 
     try {
-      const promptSistema = `Você é o Pulse AI, um assistente virtual veloz criado por ${nomeUtilizador} (Lucas Cardoso Alves). Responda em português brasileiro de forma direta e organizada em tópicos.`;
+      const promptSistema = `Você é o Pulse AI, um assistente virtual inteligente e fluido criado por ${nomeUtilizador} (Lucas Cardoso Alves). Responda sempre em português brasileiro de forma natural, direta e organizada em tópicos.`;
       const url = `https://text.pollinations.ai/${encodeURIComponent(promptSistema + "\nPergunta: " + texto)}`;
 
       const response = await fetch(url);
@@ -243,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const respostaBruta = await response.text();
         if (respostaBruta && respostaBruta.length > 3) {
           respostaEntregue = true;
-          clearTimeout(timerRapido);
+          clearTimeout(timerSeguranca);
           if (idDigitando) idDigitando.remove();
           const textoFormatado = formatarTextoIA(respostaBruta);
           adicionarBalao(textoFormatado, 'ai-message');
@@ -251,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     } catch (err) {
-      // O timeout de segurança já gerencia falhas
+      // O temporizador cuida de entregar a resposta dinâmica se houver falha de rede
     }
   }
 
