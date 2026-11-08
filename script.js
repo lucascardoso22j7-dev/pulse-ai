@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (chatBody) {
     chatBody.innerHTML = `
       <div class="message ai-message">
-        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O Pulse AI está com o núcleo de conversação livre totalmente ativo. O que vamos debater ou pesquisar?</div>
+        <div class="bubble">Olá, <b>${nomeUtilizador}</b>! O motor de alta velocidade Groq (Llama 3) está online. O que vamos pesquisar ou criar hoje?</div>
       </div>
     `;
   }
@@ -158,18 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/\n/g, '<br>');
   }
 
-  // RESPOSTA DINÂMICA INTELIGENTE (Sem frases robóticas)
-  function gerarRespostaDinamica(texto) {
-    const t = texto.toLowerCase();
-    if (t.includes('quem criou') || t.includes('criador')) {
-      return `Fui criado por <b>${nomeUtilizador}</b> (Lucas Cardoso Alves), um programador visionário que concebeu a minha arquitetura para ser rápida, inteligente e totalmente autónoma!`;
-    }
-    if (t.includes('olá') || t.includes('ola') || t.includes('tudo bem')) {
-      return `Olá, ${nomeUtilizador}! Tudo excelente por aqui. O que mandas? Vamos debater alguma ideia ou procurar alguma fotografia técnica?`;
-    }
-    return `Essa é uma excelente questão, ${nomeUtilizador}. Sobre "${texto}", posso dizer que envolve conceitos profundos de análise, aplicação prática e desenvolvimento contínuo. Quer que eu detalhe os pontos principais ou procure fotografias sobre o tema?`;
-  }
-
   async function enviarMensagem() {
     if (!inputPergunta) return;
     const texto = inputPergunta.value.trim();
@@ -223,38 +211,45 @@ document.addEventListener('DOMContentLoaded', () => {
     const HTMLPontinhos = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
     const idDigitando = adicionarBalao(HTMLPontinhos, 'ai-message digitando');
 
-    let respostaEntregue = false;
-
-    // TIMEOUT ESTENDIDO PARA 6 SEGUNDOS (Dá tempo à API externa de responder sem cortar)
-    const timerSeguranca = setTimeout(() => {
-      if (!respostaEntregue) {
-        respostaEntregue = true;
-        if (idDigitando) idDigitando.remove();
-        const respDinamica = gerarRespostaDinamica(texto);
-        adicionarBalao(respDinamica, 'ai-message');
-        falarTexto(respDinamica);
-      }
-    }, 6000);
-
     try {
-      const promptSistema = `Você é o Pulse AI, um assistente virtual inteligente e fluido criado por ${nomeUtilizador} (Lucas Cardoso Alves). Responda sempre em português brasileiro de forma natural, direta e organizada em tópicos.`;
-      const url = `https://text.pollinations.ai/${encodeURIComponent(promptSistema + "\nPergunta: " + texto)}`;
+      const GROQ_API_KEY = "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"; 
 
-      const response = await fetch(url);
-      
-      if (response.ok && !respostaEntregue) {
-        const respostaBruta = await response.text();
-        if (respostaBruta && respostaBruta.length > 3) {
-          respostaEntregue = true;
-          clearTimeout(timerSeguranca);
-          if (idDigitando) idDigitando.remove();
-          const textoFormatado = formatarTextoIA(respostaBruta);
-          adicionarBalao(textoFormatado, 'ai-message');
-          falarTexto(respostaBruta);
-        }
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${GROQ_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "llama3-70b-8192",
+          messages: [
+            {
+              role: "system",
+              content: `Você é o Pulse AI, um assistente virtual veloz, inteligente e autónomo criado por ${nomeUtilizador} (Lucas Cardoso Alves). Responda sempre em português brasileiro de forma detalhada, clara e organizada em tópicos quando necessário.`
+            },
+            {
+              role: "user",
+              content: texto
+            }
+          ],
+          temperature: 0.7
+        })
+      });
+
+      if (idDigitando) idDigitando.remove();
+
+      if (response.ok) {
+        const data = await response.json();
+        const respostaBruta = data.choices[0].message.content;
+        const textoFormatado = formatarTextoIA(respostaBruta);
+        adicionarBalao(textoFormatado, 'ai-message');
+        falarTexto(respostaBruta);
+      } else {
+        adicionarBalao("Erro na API da Groq. Verifique a ligação.", 'ai-message');
       }
     } catch (err) {
-      // O temporizador cuida de entregar a resposta dinâmica se houver falha de rede
+      if (idDigitando) idDigitando.remove();
+      adicionarBalao("Erro de conexão ao contactar o servidor da Groq.", 'ai-message');
     }
   }
 
